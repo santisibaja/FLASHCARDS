@@ -2,377 +2,74 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fichas Interactivas Mezclables</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fichas Interactivas Mejoradas</title>
     <style>
+        /* Estilos mejorados para evitar volteos no deseados */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            padding: 15px;
-            background-color: #f5f5f7;
-            max-width: 100%;
-            margin: 0 auto;
-            -webkit-tap-highlight-color: transparent;
-        }
-        h1 {
-            text-align: center;
-            color: #1c1c1e;
-            margin-bottom: 20px;
-            font-size: 22px;
-        }
-        .flashcard-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .flashcard {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 20px;
-            cursor: pointer;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            transform-style: preserve-3d;
-            perspective: 1000px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            touch-action: manipulation;
             -webkit-user-select: none;
             user-select: none;
-            touch-action: manipulation;
+        }
+        .flashcard {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
         }
         .flashcard-front, .flashcard-back {
-            position: absolute;
-            width: 85%;
-            height: 85%;
             backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            transition: transform 0.6s;
-            border-radius: 10px;
-        }
-        .flashcard-front {
-            background-color: #007aff;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
         .flashcard-back {
-            background-color: #34c759;
-            color: white;
-            transform: rotateY(180deg);
-            font-size: 16px;
-        }
-        .flipped .flashcard-front {
             transform: rotateY(180deg);
         }
-        .flipped .flashcard-back {
-            transform: rotateY(0deg);
-        }
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            gap: 10px;
-        }
-        button {
-            background-color: #007aff;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            flex: 1;
-            -webkit-appearance: none;
-        }
-        button:active {
-            background-color: #005bb5;
-            transform: scale(0.98);
-        }
-        .counter {
-            text-align: center;
-            margin: 15px 0;
-            font-weight: bold;
-            color: #636366;
-        }
-        .settings {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        #shuffle-btn {
-            background-color: #ff9500;
-        }
-        #shuffle-btn:active {
-            background-color: #cc7700;
-        }
-        @media (max-width: 500px) {
-            .flashcard {
-                height: 250px;
-            }
-            button {
-                padding: 10px 15px;
-                font-size: 14px;
-            }
+        .flipped {
+            transform: rotateY(180deg);
         }
     </style>
 </head>
 <body>
-    <h1>Fichas de Estudio Interactivas</h1>
-    
-    <div class="settings">
-        <button id="shuffle-btn">🔀 Mezclar Tarjetas</button>
-    </div>
-    
-    <div class="counter">Tarjeta <span id="current-card">1</span> de <span id="total-cards">25</span></div>
-    
-    <div class="flashcard-container">
-        <!-- Las tarjetas se generarán con JavaScript -->
-    </div>
-    
-    <div class="controls">
-        <button id="prev-btn">⬅ Anterior</button>
-        <button id="next-btn">Siguiente ➡</button>
-    </div>
-    
-    <script>
-        const flashcards = [
-            {
-                question: "(1) ¿Qué fue el Centro de Estudios Germinal y cuándo surgió?",
-                answer: "Fue un grupo intelectual que surgió en 1913 y promovía ideas sociales y políticas progresistas."
-            },
-            {
-                question: "(2) ¿Qué organizaciones obreras destacaron en el Estado Liberal?",
-                answer: "Confederación General de Trabajadores, Liga de Obreros, Sociedad de Artesanos."
-            },
-            {
-                question: "(3) ¿Qué leyes sociales se promulgaron entre 1920 y 1925?",
-                answer: "Ley de jornada laboral de 8 horas (1920), Ley de Salud Pública (1920), Ley de Inquilinato (1922), Ley de Accidentes de Trabajo (1925)."
-            },
-            {
-                question: "(4) ¿Qué partido fundó Jorge Volio y qué proponía?",
-                answer: "El Partido Reformista (1923); proponía reforma agraria, presupuesto educativo, respeto religioso y justicia social."
-            },
-            {
-                question: "(5) ¿Qué objetivos tenía la Liga Feminista?",
-                answer: "Igualdad entre hombres y mujeres, derecho a la educación, igualdad salarial, emancipación jurídica y política."
-            },
-            {
-                question: "(6) ¿Qué papel jugó el Partido Comunista en las luchas sociales?",
-                answer: "Lideró huelgas, promovió garantías sociales y derechos laborales; fundado por Manuel Mora en 1931."
-            },
-            {
-                question: "(7) ¿Qué fue la huelga bananera de 1934?",
-                answer: "Fue una protesta liderada por el Partido Comunista contra la UFCo para exigir mejores condiciones laborales."
-            },
-            {
-                question: "(8) ¿Cómo era el sufragio en Costa Rica antes de 1949?",
-                answer: "Era censitario, calificado, indirecto y público; excluía a mujeres, analfabetos y pobres."
-            },
-            {
-                question: "(9) ¿Qué significa sufragio censitario?",
-                answer: "Voto limitado a quienes poseían propiedades o riqueza."
-            },
-            {
-                question: "(10) ¿Qué reforma introdujo el voto directo y cuándo?",
-                answer: "Ricardo Jiménez aprobó el voto directo en 1913."
-            },
-            {
-                question: "(11) ¿Qué reforma importante ocurrió en 1925?",
-                answer: "Se instauró el voto secreto y se creó el Consejo Electoral."
-            },
-            {
-                question: "(12) ¿Qué motivó la creación del Tribunal Supremo de Elecciones?",
-                answer: "El fraude electoral de 1948 y la Guerra Civil."
-            },
-            {
-                question: "(13) ¿Qué cambios trajo la Constitución de 1949 al sistema electoral?",
-                answer: "Se estableció el TSE, voto femenino, secreto, directo y universal."
-            },
-            {
-                question: "(14) ¿Qué doctrina inspiró la Reforma Social?",
-                answer: "La doctrina social de la Iglesia: Rerum Novarum y Quadragesimo Anno."
-            },
-            {
-                question: "(15) ¿Qué instituciones nacieron durante la Reforma Social?",
-                answer: "UCR (1940), CCSS (1941), Código de Trabajo (1943)."
-            },
-            {
-                question: "(16) ¿Qué garantías sociales se establecieron?",
-                answer: "Derecho al trabajo, salud, educación, vivienda, pensiones, protección a niños y ancianos."
-            },
-            {
-                question: "(17) ¿Qué características tiene la CCSS?",
-                answer: "Sistema tripartito (Estado, patrono, obrero), salud universal, regímenes de pensiones y salud."
-            },
-            {
-                question: "(18) ¿Qué establece el Código de Trabajo?",
-                answer: "Jornada de 8 horas, salario mínimo, vacaciones, derecho a huelga, seguro social."
-            },
-            {
-                question: "(19) ¿Qué evento desencadenó la Guerra Civil de 1948?",
-                answer: "La anulación de las elecciones en las que ganó Otilio Ulate."
-            },
-            {
-                question: "(20) ¿Qué grupo armado lideró José Figueres Ferrer?",
-                answer: "El Ejército de Liberación Nacional."
-            },
-            {
-                question: "(21) ¿Qué factores contribuyeron a la guerra además del fraude electoral?",
-                answer: "Nepotismo, corrupción, alianza con comunistas, huelga de brazos caídos, incendio de documentos electorales."
-            },
-            {
-                question: "(22) ¿Qué fue el Pacto de la Embajada de México?",
-                answer: "Acuerdo para que Picado dejara el poder y lo asumiera Santos León Herrera temporalmente."
-            },
-            {
-                question: "(23) ¿Qué estableció el Pacto Ulate-Figueres?",
-                answer: "Ulate cedía el poder por 18 meses a la Junta Fundadora, luego asumiría la presidencia."
-            },
-            {
-                question: "(24) ¿Qué medidas tomó la Junta Fundadora?",
-                answer: "Abolió el ejército, nacionalizó la banca, creó el ICE y el TSE, impulsó instituciones autónomas."
-            },
-            {
-                question: "(25) ¿Qué cambios trajo la Constitución de 1949?",
-                answer: "Garantías sociales, creación del TSE, voto femenino, servicio civil, Contraloría y educación como derecho."
-            }
-        ];
+    <!-- Contenido de las fichas... -->
 
-        const container = document.querySelector('.flashcard-container');
-        const currentCardDisplay = document.getElementById('current-card');
-        const totalCardsDisplay = document.getElementById('total-cards');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const shuffleBtn = document.getElementById('shuffle-btn');
-        
-        let currentCardIndex = 0;
-        let shuffledDeck = [...flashcards];
-        
-        // Mostrar el total de tarjetas
-        totalCardsDisplay.textContent = flashcards.length;
-        
-        // Función para mezclar tarjetas (algoritmo Fisher-Yates)
-        function shuffleCards() {
-            shuffledDeck = [...flashcards];
-            for (let i = shuffledDeck.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
-            }
-            currentCardIndex = 0;
-            createFlashcards();
-            alert("¡Tarjetas mezcladas! Comenzando desde la primera.");
-        }
-        
-        // Crear las tarjetas
-        function createFlashcards() {
-            container.innerHTML = '';
-            
-            shuffledDeck.forEach((card, index) => {
-                const flashcard = document.createElement('div');
-                flashcard.className = 'flashcard';
-                flashcard.innerHTML = `
-                    <div class="flashcard-front">${card.question}</div>
-                    <div class="flashcard-back">${card.answer}</div>
-                `;
-                
-                flashcard.addEventListener('click', () => {
-                    flashcard.classList.toggle('flipped');
-                });
-                
-                // Soporte para toque en dispositivos táctiles
-                flashcard.addEventListener('touchstart', (e) => {
-                    if (e.touches.length === 1) {
-                        flashcard.classList.toggle('flipped');
-                    }
-                }, { passive: true });
-                
-                container.appendChild(flashcard);
-            });
-            
-            updateCardDisplay();
-        }
-        
-        // Actualizar la visualización de la tarjeta actual
-        function updateCardDisplay() {
+    <script>
+        // Código JavaScript mejorado
+        document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.flashcard');
-            cards.forEach((card, index) => {
-                card.style.display = index === currentCardIndex ? 'flex' : 'none';
-                card.classList.remove('flipped'); // Resetear al cambiar de tarjeta
+            let isFlipping = false; // Bandera para prevenir volteos múltiples
+
+            cards.forEach(card => {
+                // Evento para dispositivos táctiles
+                card.addEventListener('touchstart', function(e) {
+                    if (!isFlipping) {
+                        isFlipping = true;
+                        this.classList.toggle('flipped');
+                        setTimeout(() => isFlipping = false, 600); // Espera a que termine la animación
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+
+                // Evento para clics en desktop
+                card.addEventListener('click', function(e) {
+                    if (!isFlipping && !('ontouchstart' in window)) {
+                        isFlipping = true;
+                        this.classList.toggle('flipped');
+                        setTimeout(() => isFlipping = false, 600);
+                    }
+                });
             });
-            currentCardDisplay.textContent = currentCardIndex + 1;
-        }
-        
-        // Navegación
-        prevBtn.addEventListener('click', () => {
-            if (currentCardIndex > 0) {
-                currentCardIndex--;
-                updateCardDisplay();
-            }
+
+            // Añade este código si usas navegación entre fichas
+            document.querySelectorAll('#prev-btn, #next-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    cards.forEach(card => card.classList.remove('flipped'));
+                });
+            });
         });
-        
-        nextBtn.addEventListener('click', () => {
-            if (currentCardIndex < shuffledDeck.length - 1) {
-                currentCardIndex++;
-                updateCardDisplay();
-            }
-        });
-        
-        // Mezclar tarjetas
-        shuffleBtn.addEventListener('click', shuffleCards);
-        
-        // Teclado y gestos táctiles
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' && currentCardIndex > 0) {
-                currentCardIndex--;
-                updateCardDisplay();
-            } else if (e.key === 'ArrowRight' && currentCardIndex < shuffledDeck.length - 1) {
-                currentCardIndex++;
-                updateCardDisplay();
-            } else if (e.key === ' ' || e.key === 'Spacebar') {
-                const currentCard = document.querySelectorAll('.flashcard')[currentCardIndex];
-                currentCard.classList.toggle('flipped');
-                e.preventDefault();
-            }
-        });
-        
-        // Soporte para deslizar en móviles
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-        
-        document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
-        
-        function handleSwipe() {
-            const threshold = 50; // Mínimo píxeles para considerar un deslizamiento
-            
-            if (touchEndX < touchStartX - threshold) {
-                // Deslizamiento izquierda (siguiente)
-                if (currentCardIndex < shuffledDeck.length - 1) {
-                    currentCardIndex++;
-                    updateCardDisplay();
-                }
-            } else if (touchEndX > touchStartX + threshold) {
-                // Deslizamiento derecha (anterior)
-                if (currentCardIndex > 0) {
-                    currentCardIndex--;
-                    updateCardDisplay();
-                }
-            }
-        }
-        
-        // Inicializar
-        createFlashcards();
     </script>
 </body>
 </html>
