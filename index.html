@@ -3,73 +3,586 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fichas Interactivas Mejoradas</title>
+    <title>Fichas Interactivas Mezclables</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Estilos mejorados para evitar volteos no deseados */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            touch-action: manipulation;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 15px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            max-width: 100%;
+            margin: 0 auto;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .app-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .settings {
+            padding: 15px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .counter {
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            flex-grow: 1;
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 15px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #007aff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .controls-top {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        
+        button:active {
+            transform: scale(0.96);
+            background: #005bb5;
+        }
+        
+        #shuffle-btn {
+            background: #ff9500;
+        }
+        
+        #shuffle-btn:active {
+            background: #cc7700;
+        }
+        
+        .flashcard-container {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .flashcard {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            cursor: pointer;
+            height: 300px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
             -webkit-user-select: none;
             user-select: none;
-        }
-        .flashcard {
             transition: transform 0.6s;
-            transform-style: preserve-3d;
-            position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        .flashcard-front, .flashcard-back {
-            backface-visibility: hidden;
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-content {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            width: calc(100% - 60px);
+            height: calc(100% - 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backface-visibility: hidden;
         }
+        
+        .flashcard-front {
+            background: linear-gradient(135deg, #007aff 0%, #00c6ff 100%);
+            color: white;
+            border-radius: 12px;
+        }
+        
         .flashcard-back {
+            background: linear-gradient(135deg, #34c759 0%, #00d2a9 100%);
+            color: white;
+            border-radius: 12px;
             transform: rotateY(180deg);
         }
-        .flipped {
-            transform: rotateY(180deg);
+        
+        .question {
+            font-weight: bold;
+            font-size: 1.4rem;
+            line-height: 1.4;
+        }
+        
+        .answer {
+            font-size: 1.2rem;
+            line-height: 1.4;
+        }
+        
+        .hint {
+            position: absolute;
+            bottom: 15px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+        
+        .controls-bottom {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+        
+        .nav-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 1rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .swipe-instruction {
+            text-align: center;
+            color: #6c757d;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .question {
+                font-size: 1.2rem;
+            }
+            
+            .answer {
+                font-size: 1.1rem;
+            }
+            
+            .flashcard {
+                height: 250px;
+                padding: 20px;
+            }
+            
+            button {
+                padding: 8px 12px;
+            }
+            
+            .settings {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .controls-top {
+                justify-content: center;
+            }
+        }
+        
+        .flip-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: rgba(255,255,255,0.7);
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
-    <!-- Contenido de las fichas... -->
-
+    <header>
+        <h1><i class="fas fa-graduation-cap"></i> Fichas de Estudio Interactivas</h1>
+        <div class="subtitle">Preparación para el II Parcial - Historia de Costa Rica</div>
+    </header>
+    
+    <div class="app-container">
+        <div class="settings">
+            <div class="stats">
+                <div class="counter">Tarjeta <span id="current-card">1</span> de <span id="total-cards">25</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+            
+            <div class="controls-top">
+                <button id="shuffle-btn">
+                    <i class="fas fa-random"></i> Mezclar
+                </button>
+            </div>
+        </div>
+        
+        <div class="flashcard-container">
+            <div class="flashcard" id="current-flashcard">
+                <div class="flashcard-content flashcard-front">
+                    <div class="question">Cargando preguntas...</div>
+                    <div class="hint">Toca la tarjeta para ver la respuesta</div>
+                    <div class="flip-icon"><i class="fas fa-sync-alt"></i></div>
+                </div>
+                <div class="flashcard-content flashcard-back">
+                    <div class="answer">Cargando respuestas...</div>
+                    <div class="hint">Toca la tarjeta para volver a la pregunta</div>
+                    <div class="flip-icon"><i class="fas fa-sync-alt"></i></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="swipe-instruction">
+            <span><i class="fas fa-arrow-left"></i> Desliza para anterior</span>
+            <span>Desliza para siguiente <i class="fas fa-arrow-right"></i></span>
+        </div>
+        
+        <div class="controls-bottom">
+            <button id="prev-btn" class="nav-btn">
+                <i class="fas fa-arrow-left"></i> Anterior
+            </button>
+            <button id="next-btn" class="nav-btn">
+                Siguiente <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Creado para un estudio efectivo | Toca las tarjetas para voltearlas
+    </div>
+    
     <script>
-        // Código JavaScript mejorado
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.flashcard');
-            let isFlipping = false; // Bandera para prevenir volteos múltiples
+        const flashcards = [
+            {
+                question: "(1) ¿Qué fue el Centro de Estudios Germinal y cuándo surgió?",
+                answer: "Fue un grupo intelectual que surgió en 1913 y promovía ideas sociales y políticas progresistas."
+            },
+            {
+                question: "(2) ¿Qué organizaciones obreras destacaron en el Estado Liberal?",
+                answer: "Confederación General de Trabajadores, Liga de Obreros, Sociedad de Artesanos."
+            },
+            {
+                question: "(3) ¿Qué leyes sociales se promulgaron entre 1920 y 1925?",
+                answer: "Ley de jornada laboral de 8 horas (1920), Ley de Salud Pública (1920), Ley de Inquilinato (1922), Ley de Accidentes de Trabajo (1925)."
+            },
+            {
+                question: "(4) ¿Qué partido fundó Jorge Volio y qué proponía?",
+                answer: "El Partido Reformista (1923); proponía reforma agraria, presupuesto educativo, respeto religioso y justicia social."
+            },
+            {
+                question: "(5) ¿Qué objetivos tenía la Liga Feminista?",
+                answer: "Igualdad entre hombres y mujeres, derecho a la educación, igualdad salarial, emancipación jurídica y política."
+            },
+            {
+                question: "(6) ¿Qué papel jugó el Partido Comunista en las luchas sociales?",
+                answer: "Lideró huelgas, promovió garantías sociales y derechos laborales; fundado por Manuel Mora en 1931."
+            },
+            {
+                question: "(7) ¿Qué fue la huelga bananera de 1934?",
+                answer: "Fue una protesta liderada por el Partido Comunista contra la UFCo para exigir mejores condiciones laborales."
+            },
+            {
+                question: "(8) ¿Cómo era el sufragio en Costa Rica antes de 1949?",
+                answer: "Era censitario, calificado, indirecto y público; excluía a mujeres, analfabetos y pobres."
+            },
+            {
+                question: "(9) ¿Qué significa sufragio censitario?",
+                answer: "Voto limitado a quienes poseían propiedades o riqueza."
+            },
+            {
+                question: "(10) ¿Qué reforma introdujo el voto directo y cuándo?",
+                answer: "Ricardo Jiménez aprobó el voto directo en 1913."
+            },
+            {
+                question: "(11) ¿Qué reforma importante ocurrió en 1925?",
+                answer: "Se instauró el voto secreto y se creó el Consejo Electoral."
+            },
+            {
+                question: "(12) ¿Qué motivó la creación del Tribunal Supremo de Elecciones?",
+                answer: "El fraude electoral de 1948 y la Guerra Civil."
+            },
+            {
+                question: "(13) ¿Qué cambios trajo la Constitución de 1949 al sistema electoral?",
+                answer: "Se estableció el TSE, voto femenino, secreto, directo y universal."
+            },
+            {
+                question: "(14) ¿Qué doctrina inspiró la Reforma Social?",
+                answer: "La doctrina social de la Iglesia: Rerum Novarum y Quadragesimo Anno."
+            },
+            {
+                question: "(15) ¿Qué instituciones nacieron durante la Reforma Social?",
+                answer: "UCR (1940), CCSS (1941), Código de Trabajo (1943)."
+            },
+            {
+                question: "(16) ¿Qué garantías sociales se establecieron?",
+                answer: "Derecho al trabajo, salud, educación, vivienda, pensiones, protección a niños y ancianos."
+            },
+            {
+                question: "(17) ¿Qué características tiene la CCSS?",
+                answer: "Sistema tripartito (Estado, patrono, obrero), salud universal, regímenes de pensiones y salud."
+            },
+            {
+                question: "(18) ¿Qué establece el Código de Trabajo?",
+                answer: "Jornada de 8 horas, salario mínimo, vacaciones, derecho a huelga, seguro social."
+            },
+            {
+                question: "(19) ¿Qué evento desencadenó la Guerra Civil de 1948?",
+                answer: "La anulación de las elecciones en las que ganó Otilio Ulate."
+            },
+            {
+                question: "(20) ¿Qué grupo armado lideró José Figueres Ferrer?",
+                answer: "El Ejército de Liberación Nacional."
+            },
+            {
+                question: "(21) ¿Qué factores contribuyeron a la guerra además del fraude electoral?",
+                answer: "Nepotismo, corrupción, alianza con comunistas, huelga de brazos caídos, incendio de documentos electorales."
+            },
+            {
+                question: "(22) ¿Qué fue el Pacto de la Embajada de México?",
+                answer: "Acuerdo para que Picado dejara el poder y lo asumiera Santos León Herrera temporalmente."
+            },
+            {
+                question: "(23) ¿Qué estableció el Pacto Ulate-Figueres?",
+                answer: "Ulate cedía el poder por 18 meses a la Junta Fundadora, luego asumiría la presidencia."
+            },
+            {
+                question: "(24) ¿Qué medidas tomó la Junta Fundadora?",
+                answer: "Abolió el ejército, nacionalizó la banca, creó el ICE y el TSE, impulsó instituciones autónomas."
+            },
+            {
+                question: "(25) ¿Qué cambios trajo la Constitución de 1949?",
+                answer: "Garantías sociales, creación del TSE, voto femenino, servicio civil, Contraloría y educación como derecho."
+            }
+        ];
 
-            cards.forEach(card => {
-                // Evento para dispositivos táctiles
-                card.addEventListener('touchstart', function(e) {
-                    if (!isFlipping) {
-                        isFlipping = true;
-                        this.classList.toggle('flipped');
-                        setTimeout(() => isFlipping = false, 600); // Espera a que termine la animación
-                        e.preventDefault();
-                    }
-                }, { passive: false });
-
-                // Evento para clics en desktop
-                card.addEventListener('click', function(e) {
-                    if (!isFlipping && !('ontouchstart' in window)) {
-                        isFlipping = true;
-                        this.classList.toggle('flipped');
-                        setTimeout(() => isFlipping = false, 600);
-                    }
-                });
-            });
-
-            // Añade este código si usas navegación entre fichas
-            document.querySelectorAll('#prev-btn, #next-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    cards.forEach(card => card.classList.remove('flipped'));
-                });
-            });
-        });
+        // Elementos del DOM
+        const currentCardDisplay = document.getElementById('current-card');
+        const totalCardsDisplay = document.getElementById('total-cards');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const flashcard = document.getElementById('current-flashcard');
+        const questionElement = document.querySelector('.question');
+        const answerElement = document.querySelector('.answer');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Estado de la aplicación
+        let currentCardIndex = 0;
+        let shuffledDeck = [...flashcards];
+        let isFlipping = false;
+        
+        // Inicialización
+        function init() {
+            totalCardsDisplay.textContent = flashcards.length;
+            updateCardDisplay();
+            
+            // Event listeners
+            flashcard.addEventListener('click', flipCard);
+            prevBtn.addEventListener('click', showPrevCard);
+            nextBtn.addEventListener('click', showNextCard);
+            shuffleBtn.addEventListener('click', shuffleCards);
+            
+            // Eventos táctiles para voltear
+            flashcard.addEventListener('touchstart', handleTouchStart, { passive: true });
+            flashcard.addEventListener('touchend', handleTouchEnd, { passive: true });
+            
+            // Eventos para deslizar
+            document.addEventListener('touchstart', handleSwipeStart, { passive: true });
+            document.addEventListener('touchend', handleSwipeEnd, { passive: true });
+            
+            // Eventos de teclado
+            document.addEventListener('keydown', handleKeyDown);
+        }
+        
+        // Actualizar la visualización de la tarjeta actual
+        function updateCardDisplay() {
+            const card = shuffledDeck[currentCardIndex];
+            questionElement.textContent = card.question;
+            answerElement.textContent = card.answer;
+            
+            currentCardDisplay.textContent = currentCardIndex + 1;
+            
+            // Actualizar barra de progreso
+            const progress = ((currentCardIndex + 1) / flashcards.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Reiniciar estado de volteo
+            flashcard.classList.remove('flipped');
+        }
+        
+        // Voltear la tarjeta
+        function flipCard() {
+            if (isFlipping) return;
+            
+            isFlipping = true;
+            flashcard.classList.toggle('flipped');
+            
+            // Permitir otro volteo después de la animación
+            setTimeout(() => {
+                isFlipping = false;
+            }, 600);
+        }
+        
+        // Manejar toques para voltear en iOS
+        let touchStartTime = 0;
+        
+        function handleTouchStart(e) {
+            touchStartTime = Date.now();
+        }
+        
+        function handleTouchEnd(e) {
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration < 500) { // Solo considerar toques cortos
+                flipCard();
+            }
+        }
+        
+        // Mostrar tarjeta anterior
+        function showPrevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                updateCardDisplay();
+            }
+        }
+        
+        // Mostrar siguiente tarjeta
+        function showNextCard() {
+            if (currentCardIndex < shuffledDeck.length - 1) {
+                currentCardIndex++;
+                updateCardDisplay();
+            }
+        }
+        
+        // Mezclar tarjetas
+        function shuffleCards() {
+            shuffledDeck = [...flashcards];
+            for (let i = shuffledDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
+            }
+            currentCardIndex = 0;
+            updateCardDisplay();
+        }
+        
+        // Manejar deslizamiento
+        let swipeStartX = 0;
+        
+        function handleSwipeStart(e) {
+            swipeStartX = e.touches[0].clientX;
+        }
+        
+        function handleSwipeEnd(e) {
+            if (!swipeStartX) return;
+            
+            const swipeEndX = e.changedTouches[0].clientX;
+            const diff = swipeEndX - swipeStartX;
+            const threshold = 50; // Mínimo de píxeles para considerar un deslizamiento
+            
+            if (diff > threshold) {
+                showPrevCard();
+            } else if (diff < -threshold) {
+                showNextCard();
+            }
+            
+            swipeStartX = 0;
+        }
+        
+        // Manejar teclado
+        function handleKeyDown(e) {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    showPrevCard();
+                    break;
+                case 'ArrowRight':
+                    showNextCard();
+                    break;
+                case ' ':
+                case 'Spacebar':
+                    flipCard();
+                    e.preventDefault();
+                    break;
+            }
+        }
+        
+        // Iniciar la aplicación
+        window.onload = init;
     </script>
 </body>
 </html>
