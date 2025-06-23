@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fichas Interactivas Mezclables</title>
+    <title>Fichas de Biología - II Parcial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -16,7 +16,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             padding: 15px;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
             min-height: 100vh;
             max-width: 100%;
             margin: 0 auto;
@@ -89,7 +89,7 @@
         
         .progress-bar {
             height: 100%;
-            background: #007aff;
+            background: #2980b9;
             width: 0%;
             transition: width 0.3s ease;
         }
@@ -100,7 +100,7 @@
         }
         
         button {
-            background: #007aff;
+            background: #2980b9;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -116,15 +116,15 @@
         
         button:active {
             transform: scale(0.96);
-            background: #005bb5;
+            background: #1a5276;
         }
         
         #shuffle-btn {
-            background: #ff9500;
+            background: #e67e22;
         }
         
         #shuffle-btn:active {
-            background: #cc7700;
+            background: #d35400;
         }
         
         .flashcard-container {
@@ -173,13 +173,13 @@
         }
         
         .flashcard-front {
-            background: linear-gradient(135deg, #007aff 0%, #00c6ff 100%);
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
             color: white;
             border-radius: 12px;
         }
         
         .flashcard-back {
-            background: linear-gradient(135deg, #34c759 0%, #00d2a9 100%);
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
             color: white;
             border-radius: 12px;
             transform: rotateY(180deg);
@@ -194,6 +194,17 @@
         .answer {
             font-size: 1.2rem;
             line-height: 1.4;
+            text-align: left;
+            padding: 0 15px;
+        }
+        
+        .answer ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        
+        .answer li {
+            margin-bottom: 8px;
         }
         
         .hint {
@@ -246,6 +257,14 @@
             gap: 10px;
         }
         
+        .flip-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: rgba(255,255,255,0.7);
+            font-size: 1.2rem;
+        }
+        
         @media (max-width: 600px) {
             .question {
                 font-size: 1.2rem;
@@ -273,26 +292,18 @@
                 justify-content: center;
             }
         }
-        
-        .flip-icon {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            color: rgba(255,255,255,0.7);
-            font-size: 1.2rem;
-        }
     </style>
 </head>
 <body>
     <header>
-        <h1><i class="fas fa-graduation-cap"></i> Fichas de Estudio Interactivas</h1>
-        <div class="subtitle">Preparación para el II Parcial - Historia de Costa Rica</div>
+        <h1><i class="fas fa-dna"></i> Fichas de Biología</h1>
+        <div class="subtitle">II Parcial - Evolución y Fuerzas Evolutivas</div>
     </header>
     
     <div class="app-container">
         <div class="settings">
             <div class="stats">
-                <div class="counter">Tarjeta <span id="current-card">1</span> de <span id="total-cards">25</span></div>
+                <div class="counter">Tarjeta <span id="current-card">1</span> de <span id="total-cards">30</span></div>
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
@@ -342,104 +353,124 @@
     <script>
         const flashcards = [
             {
-                question: "(1) ¿Qué fue el Centro de Estudios Germinal y cuándo surgió?",
-                answer: "Fue un grupo intelectual que surgió en 1913 y promovía ideas sociales y políticas progresistas."
+                question: "1. ¿Qué es el perfil genético?",
+                answer: "Información en el ADN de cada individuo. Es diferente para cada uno, excepto gemelos idénticos."
             },
             {
-                question: "(2) ¿Qué organizaciones obreras destacaron en el Estado Liberal?",
-                answer: "Confederación General de Trabajadores, Liga de Obreros, Sociedad de Artesanos."
+                question: "2. Defina población en términos genéticos",
+                answer: "Grupo de individuos de una misma especie que viven en la misma área geográfica al mismo tiempo y comparten un mismo conjunto de genes."
             },
             {
-                question: "(3) ¿Qué leyes sociales se promulgaron entre 1920 y 1925?",
-                answer: "Ley de jornada laboral de 8 horas (1920), Ley de Salud Pública (1920), Ley de Inquilinato (1922), Ley de Accidentes de Trabajo (1925)."
+                question: "3. ¿Qué es el acervo genético?",
+                answer: "Todos los alelos de todos los genes presentes en una población."
             },
             {
-                question: "(4) ¿Qué partido fundó Jorge Volio y qué proponía?",
-                answer: "El Partido Reformista (1923); proponía reforma agraria, presupuesto educativo, respeto religioso y justicia social."
+                question: "4. ¿Qué son las frecuencias alélicas?",
+                answer: "La abundancia relativa de un alelo particular en una población."
             },
             {
-                question: "(5) ¿Qué objetivos tenía la Liga Feminista?",
-                answer: "Igualdad entre hombres y mujeres, derecho a la educación, igualdad salarial, emancipación jurídica y política."
+                question: "5. Explique qué es la evolución biológica",
+                answer: "Proceso por el cual las características de los individuos de una población cambian con el paso del tiempo, debido a cambios en las frecuencias alélicas."
             },
             {
-                question: "(6) ¿Qué papel jugó el Partido Comunista en las luchas sociales?",
-                answer: "Lideró huelgas, promovió garantías sociales y derechos laborales; fundado por Manuel Mora en 1931."
+                question: "6. Diferencia entre microevolución y macroevolución",
+                answer: "<strong>Microevolución:</strong> Cambios menores en las frecuencias alélicas dentro de una población.<br><strong>Macroevolución:</strong> Cambios a gran escala que resultan en la formación de nuevas especies."
             },
             {
-                question: "(7) ¿Qué fue la huelga bananera de 1934?",
-                answer: "Fue una protesta liderada por el Partido Comunista contra la UFCo para exigir mejores condiciones laborales."
+                question: "7. ¿Qué es la especiación?",
+                answer: "Proceso de formación de nuevas especies, donde una especie ancestral se divide en dos o más especies descendientes, generalmente por aislamiento reproductivo."
             },
             {
-                question: "(8) ¿Cómo era el sufragio en Costa Rica antes de 1949?",
-                answer: "Era censitario, calificado, indirecto y público; excluía a mujeres, analfabetos y pobres."
+                question: "8. Mencione las 5 fuerzas evolutivas principales",
+                answer: "<ul><li>1. Mutaciones</li><li>2. Reproducción sexual</li><li>3. Selección natural</li><li>4. Deriva genética</li><li>5. Migración genética</li></ul>"
             },
             {
-                question: "(9) ¿Qué significa sufragio censitario?",
-                answer: "Voto limitado a quienes poseían propiedades o riqueza."
+                question: "9. ¿Qué son las mutaciones y cómo contribuyen a la evolución?",
+                answer: "Cambios aleatorios en la secuencia de ADN. Son la fuente principal de nueva variabilidad genética (nuevos alelos) sobre la que actúan otras fuerzas evolutivas."
             },
             {
-                question: "(10) ¿Qué reforma introdujo el voto directo y cuándo?",
-                answer: "Ricardo Jiménez aprobó el voto directo en 1913."
+                question: "10. ¿Cómo contribuye la reproducción sexual a la variabilidad genética?",
+                answer: "A través de tres procesos:<ul><li>1. Entrecruzamiento (recombinación genética)</li><li>2. Distribución independiente de cromosomas</li><li>3. Fecundación al azar</li></ul>"
             },
             {
-                question: "(11) ¿Qué reforma importante ocurrió en 1925?",
-                answer: "Se instauró el voto secreto y se creó el Consejo Electoral."
+                question: "11. Explique los tipos de apareamiento",
+                answer: "<strong>Aleatorio:</strong> Sin preferencias (ej: polinización por viento)<br><strong>No aleatorio:</strong> Selección basada en fenotipos<br><strong>Endogamia:</strong> Apareamiento entre individuos genéticamente similares (puede aumentar homocigosis)"
             },
             {
-                question: "(12) ¿Qué motivó la creación del Tribunal Supremo de Elecciones?",
-                answer: "El fraude electoral de 1948 y la Guerra Civil."
+                question: "12. ¿Qué es la selección natural según Darwin?",
+                answer: "Proceso por el cual los organismos mejor adaptados a su ambiente tienen mayor probabilidad de sobrevivir y reproducirse, transmitiendo sus características ventajosas."
             },
             {
-                question: "(13) ¿Qué cambios trajo la Constitución de 1949 al sistema electoral?",
-                answer: "Se estableció el TSE, voto femenino, secreto, directo y universal."
+                question: "13. Mencione 3 agentes de selección natural",
+                answer: "<ul><li>Condiciones climáticas</li><li>Relaciones depredador-presa</li><li>Disponibilidad de recursos</li><li>Selección sexual</li><li>Enfermedades</li></ul>"
             },
             {
-                question: "(14) ¿Qué doctrina inspiró la Reforma Social?",
-                answer: "La doctrina social de la Iglesia: Rerum Novarum y Quadragesimo Anno."
+                question: "14. ¿Qué es la deriva genética?",
+                answer: "Cambios aleatorios en las frecuencias alélicas, especialmente en poblaciones pequeñas. Incluye:<ul><li>Efecto fundador</li><li>Cuello de botella</li></ul>"
             },
             {
-                question: "(15) ¿Qué instituciones nacieron durante la Reforma Social?",
-                answer: "UCR (1940), CCSS (1941), Código de Trabajo (1943)."
+                question: "15. Explique el efecto fundador",
+                answer: "Cuando un pequeño grupo se separa de una población mayor y establece una nueva población, llevando solo una fracción de la variabilidad genética original."
             },
             {
-                question: "(16) ¿Qué garantías sociales se establecieron?",
-                answer: "Derecho al trabajo, salud, educación, vivienda, pensiones, protección a niños y ancianos."
+                question: "16. ¿Qué es un cuello de botella genético?",
+                answer: "Reducción drástica del tamaño de una población que resulta en pérdida significativa de variabilidad genética."
             },
             {
-                question: "(17) ¿Qué características tiene la CCSS?",
-                answer: "Sistema tripartito (Estado, patrono, obrero), salud universal, regímenes de pensiones y salud."
+                question: "17. ¿Cómo afecta la migración genética a las poblaciones?",
+                answer: "<strong>Inmigración:</strong> Introduce nuevos alelos<br><strong>Emigración:</strong> Elimina alelos existentes<br>Puede homogenizar poblaciones diferentes"
             },
             {
-                question: "(18) ¿Qué establece el Código de Trabajo?",
-                answer: "Jornada de 8 horas, salario mínimo, vacaciones, derecho a huelga, seguro social."
+                question: "18. Mencione 3 evidencias de la evolución",
+                answer: "<ul><li>1. Paleontológicas (fósiles)</li><li>2. Anatómicas (estructuras homólogas/análogas)</li><li>3. Embriológicas</li><li>4. Bioquímicas/moleculares</li><li>5. Biogeográficas</li></ul>"
             },
             {
-                question: "(19) ¿Qué evento desencadenó la Guerra Civil de 1948?",
-                answer: "La anulación de las elecciones en las que ganó Otilio Ulate."
+                question: "19. ¿Qué son estructuras homólogas? Ejemplo",
+                answer: "Órganos con misma estructura básica pero funciones diferentes, que indican ancestro común. Ej: aleta de delfín, ala de murciélago, brazo humano."
             },
             {
-                question: "(20) ¿Qué grupo armado lideró José Figueres Ferrer?",
-                answer: "El Ejército de Liberación Nacional."
+                question: "20. ¿Qué son estructuras análogas? Ejemplo",
+                answer: "Órganos con funciones similares pero estructura diferente, que no indican parentesco. Ej: alas de insecto vs alas de ave (convergencia evolutiva)."
             },
             {
-                question: "(21) ¿Qué factores contribuyeron a la guerra además del fraude electoral?",
-                answer: "Nepotismo, corrupción, alianza con comunistas, huelga de brazos caídos, incendio de documentos electorales."
+                question: "21. ¿Qué son estructuras vestigiales? Ejemplos",
+                answer: "Órganos reducidos sin función aparente, vestigios de ancestros. Ej: apéndice, muelas del juicio en humanos; pelvis en ballenas."
             },
             {
-                question: "(22) ¿Qué fue el Pacto de la Embajada de México?",
-                answer: "Acuerdo para que Picado dejara el poder y lo asumiera Santos León Herrera temporalmente."
+                question: "22. ¿Qué información proporcionan los fósiles?",
+                answer: "<ul><li>Registro de formas ancestrales</li><li>Series evolutivas progresivas</li><li>Cambios climáticos pasados</li><li>Eventos de extinción masiva</li></ul>"
             },
             {
-                question: "(23) ¿Qué estableció el Pacto Ulate-Figueres?",
-                answer: "Ulate cedía el poder por 18 meses a la Junta Fundadora, luego asumiría la presidencia."
+                question: "23. Diferencia entre datación relativa y radiométrica",
+                answer: "<strong>Relativa:</strong> Compara posición en estratos geológicos<br><strong>Radiométrica:</strong> Usa decaimiento de isótopos (ej: C14) para edad absoluta"
             },
             {
-                question: "(24) ¿Qué medidas tomó la Junta Fundadora?",
-                answer: "Abolió el ejército, nacionalizó la banca, creó el ICE y el TSE, impulsó instituciones autónomas."
+                question: "24. ¿Qué evidencias proporciona la embriología comparada?",
+                answer: "Similitudes en etapas tempranas del desarrollo embrionario entre especies relacionadas (ej: branquias en embriones de vertebrados)."
             },
             {
-                question: "(25) ¿Qué cambios trajo la Constitución de 1949?",
-                answer: "Garantías sociales, creación del TSE, voto femenino, servicio civil, Contraloría y educación como derecho."
+                question: "25. ¿Qué evidencias moleculares apoyan la evolución?",
+                answer: "<ul><li>Similitudes en ADN/ARN entre especies</li><li>Proteínas homólogas (ej: hemoglobina, citocromos)</li><li>Rutas metabólicas conservadas</li></ul>"
+            },
+            {
+                question: "26. ¿Qué es la ontogenia y filogenia?",
+                answer: "<strong>Ontogenia:</strong> Desarrollo individual de un organismo<br><strong>Filogenia:</strong> Historia evolutiva de una especie<br>\"La ontogenia recapitula la filogenia\" (Haeckel)"
+            },
+            {
+                question: "27. ¿Qué es la extinción? Mencione causas naturales",
+                answer: "Desaparición de todos los miembros de una especie. Causas naturales:<ul><li>Cambios ambientales</li><li>Competencia</li><li>Especialización excesiva</li><li>Depredación</li></ul>"
+            },
+            {
+                question: "28. Mencione causas antropogénicas de extinción",
+                answer: "<ul><li>Destrucción de hábitats</li><li>Contaminación</li><li>Introducción de especies invasoras</li><li>Caza furtiva</li><li>Cambio climático</li></ul>"
+            },
+            {
+                question: "29. Ejemplo de caso de extinción en Costa Rica",
+                answer: "<strong>Sapo dorado (Bufo periglenes):</strong> Endémico de Monteverde, último avistamiento en 1989. Probable causa: calentamiento global afectando su hábitat nuboso."
+            },
+            {
+                question: "30. Compare las teorías de Lamarck y Darwin",
+                answer: "<strong>Lamarck:</strong><ul><li>Herencia de caracteres adquiridos</li><li>Uso y desuso modifican órganos</li></ul><strong>Darwin:</strong><ul><li>Selección natural sobre variación existente</li><li>No herencia de caracteres adquiridos</li></ul>"
             }
         ];
 
@@ -486,7 +517,7 @@
         function updateCardDisplay() {
             const card = shuffledDeck[currentCardIndex];
             questionElement.textContent = card.question;
-            answerElement.textContent = card.answer;
+            answerElement.innerHTML = card.answer;
             
             currentCardDisplay.textContent = currentCardIndex + 1;
             
