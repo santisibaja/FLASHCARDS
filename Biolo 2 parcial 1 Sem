@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fichas de Biología - II Parcial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 15px;
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            min-height: 100vh;
+            max-width: 100%;
+            margin: 0 auto;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .app-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .settings {
+            padding: 15px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .counter {
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            flex-grow: 1;
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 15px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #2980b9;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .controls-top {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        
+        button:active {
+            transform: scale(0.96);
+            background: #1a5276;
+        }
+        
+        #shuffle-btn {
+            background: #e67e22;
+        }
+        
+        #shuffle-btn:active {
+            background: #d35400;
+        }
+        
+        .flashcard-container {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .flashcard {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            cursor: pointer;
+            height: 300px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: transform 0.6s;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-content {
+            position: absolute;
+            width: calc(100% - 60px);
+            height: calc(100% - 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backface-visibility: hidden;
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+            color: white;
+            border-radius: 12px;
+        }
+        
+        .flashcard-back {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border-radius: 12px;
+            transform: rotateY(180deg);
+        }
+        
+        .question {
+            font-weight: bold;
+            font-size: 1.4rem;
+            line-height: 1.4;
+        }
+        
+        .answer {
+            font-size: 1.2rem;
+            line-height: 1.4;
+            text-align: left;
+            padding: 0 15px;
+        }
+        
+        .answer ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        
+        .answer li {
+            margin-bottom: 8px;
+        }
+        
+        .hint {
+            position: absolute;
+            bottom: 15px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+        
+        .controls-bottom {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+        
+        .nav-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 1rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .creator {
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .creator:hover {
+            text-decoration: underline;
+        }
+        
+        .swipe-instruction {
+            text-align: center;
+            color: #6c757d;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .flip-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: rgba(255,255,255,0.7);
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 600px) {
+            .question {
+                font-size: 1.2rem;
+            }
+            
+            .answer {
+                font-size: 1.1rem;
+            }
+            
+            .flashcard {
+                height: 250px;
+                padding: 20px;
+            }
+            
+            button {
+                padding: 8px 12px;
+            }
+            
+            .settings {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .controls-top {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-dna"></i> Fichas de Biología</h1>
+        <div class="subtitle">II Parcial - Evolución y Fuerzas Evolutivas</div>
+    </header>
+    
+    <div class="app-container">
+        <div class="settings">
+            <div class="stats">
+                <div class="counter">Tarjeta <span id="current-card">1</span> de <span id="total-cards">30</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+            
+            <div class="controls-top">
+                <button id="shuffle-btn">
+                    <i class="fas fa-random"></i> Mezclar
+                </button>
+            </div>
+        </div>
+        
+        <div class="flashcard-container">
+            <div class="flashcard" id="current-flashcard">
+                <div class="flashcard-content flashcard-front">
+                    <div class="question">Cargando preguntas...</div>
+                    <div class="hint">Toca la tarjeta para ver la respuesta</div>
+                    <div class="flip-icon"><i class="fas fa-sync-alt"></i></div>
+                </div>
+                <div class="flashcard-content flashcard-back">
+                    <div class="answer">Cargando respuestas...</div>
+                    <div class="hint">Toca la tarjeta para volver a la pregunta</div>
+                    <div class="flip-icon"><i class="fas fa-sync-alt"></i></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="swipe-instruction">
+            <span><i class="fas fa-arrow-left"></i> Desliza para anterior</span>
+            <span>Desliza para siguiente <i class="fas fa-arrow-right"></i></span>
+        </div>
+        
+        <div class="controls-bottom">
+            <button id="prev-btn" class="nav-btn">
+                <i class="fas fa-arrow-left"></i> Anterior
+            </button>
+            <button id="next-btn" class="nav-btn">
+                Siguiente <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Creado por <a href="#" class="creator">Santiago Sibaja</a> | Toca las tarjetas para voltearlas
+    </div>
+    
+    <script>
+        const flashcards = [
+            {
+                question: "1. ¿Qué es el perfil genético?",
+                answer: "Información en el ADN de cada individuo. Es diferente para cada uno, excepto gemelos idénticos."
+            },
+            {
+                question: "2. Defina población en términos genéticos",
+                answer: "Grupo de individuos de una misma especie que viven en la misma área geográfica al mismo tiempo y comparten un mismo conjunto de genes."
+            },
+            {
+                question: "3. ¿Qué es el acervo genético?",
+                answer: "Todos los alelos de todos los genes presentes en una población."
+            },
+            {
+                question: "4. ¿Qué son las frecuencias alélicas?",
+                answer: "La abundancia relativa de un alelo particular en una población."
+            },
+            {
+                question: "5. Explique qué es la evolución biológica",
+                answer: "Proceso por el cual las características de los individuos de una población cambian con el paso del tiempo, debido a cambios en las frecuencias alélicas."
+            },
+            {
+                question: "6. Diferencia entre microevolución y macroevolución",
+                answer: "<strong>Microevolución:</strong> Cambios menores en las frecuencias alélicas dentro de una población.<br><strong>Macroevolución:</strong> Cambios a gran escala que resultan en la formación de nuevas especies."
+            },
+            {
+                question: "7. ¿Qué es la especiación?",
+                answer: "Proceso de formación de nuevas especies, donde una especie ancestral se divide en dos o más especies descendientes, generalmente por aislamiento reproductivo."
+            },
+            {
+                question: "8. Mencione las 5 fuerzas evolutivas principales",
+                answer: "<ul><li>1. Mutaciones</li><li>2. Reproducción sexual</li><li>3. Selección natural</li><li>4. Deriva genética</li><li>5. Migración genética</li></ul>"
+            },
+            {
+                question: "9. ¿Qué son las mutaciones y cómo contribuyen a la evolución?",
+                answer: "Cambios aleatorios en la secuencia de ADN. Son la fuente principal de nueva variabilidad genética (nuevos alelos) sobre la que actúan otras fuerzas evolutivas."
+            },
+            {
+                question: "10. ¿Cómo contribuye la reproducción sexual a la variabilidad genética?",
+                answer: "A través de tres procesos:<ul><li>1. Entrecruzamiento (recombinación genética)</li><li>2. Distribución independiente de cromosomas</li><li>3. Fecundación al azar</li></ul>"
+            },
+            {
+                question: "11. Explique los tipos de apareamiento",
+                answer: "<strong>Aleatorio:</strong> Sin preferencias (ej: polinización por viento)<br><strong>No aleatorio:</strong> Selección basada en fenotipos<br><strong>Endogamia:</strong> Apareamiento entre individuos genéticamente similares (puede aumentar homocigosis)"
+            },
+            {
+                question: "12. ¿Qué es la selección natural según Darwin?",
+                answer: "Proceso por el cual los organismos mejor adaptados a su ambiente tienen mayor probabilidad de sobrevivir y reproducirse, transmitiendo sus características ventajosas."
+            },
+            {
+                question: "13. Mencione 3 agentes de selección natural",
+                answer: "<ul><li>Condiciones climáticas</li><li>Relaciones depredador-presa</li><li>Disponibilidad de recursos</li><li>Selección sexual</li><li>Enfermedades</li></ul>"
+            },
+            {
+                question: "14. ¿Qué es la deriva genética?",
+                answer: "Cambios aleatorios en las frecuencias alélicas, especialmente en poblaciones pequeñas. Incluye:<ul><li>Efecto fundador</li><li>Cuello de botella</li></ul>"
+            },
+            {
+                question: "15. Explique el efecto fundador",
+                answer: "Cuando un pequeño grupo se separa de una población mayor y establece una nueva población, llevando solo una fracción de la variabilidad genética original."
+            },
+            {
+                question: "16. ¿Qué es un cuello de botella genético?",
+                answer: "Reducción drástica del tamaño de una población que resulta en pérdida significativa de variabilidad genética."
+            },
+            {
+                question: "17. ¿Cómo afecta la migración genética a las poblaciones?",
+                answer: "<strong>Inmigración:</strong> Introduce nuevos alelos<br><strong>Emigración:</strong> Elimina alelos existentes<br>Puede homogenizar poblaciones diferentes"
+            },
+            {
+                question: "18. Mencione 3 evidencias de la evolución",
+                answer: "<ul><li>1. Paleontológicas (fósiles)</li><li>2. Anatómicas (estructuras homólogas/análogas)</li><li>3. Embriológicas</li><li>4. Bioquímicas/moleculares</li><li>5. Biogeográficas</li></ul>"
+            },
+            {
+                question: "19. ¿Qué son estructuras homólogas? Ejemplo",
+                answer: "Órganos con misma estructura básica pero funciones diferentes, que indican ancestro común. Ej: aleta de delfín, ala de murciélago, brazo humano."
+            },
+            {
+                question: "20. ¿Qué son estructuras análogas? Ejemplo",
+                answer: "Órganos con funciones similares pero estructura diferente, que no indican parentesco. Ej: alas de insecto vs alas de ave (convergencia evolutiva)."
+            },
+            {
+                question: "21. ¿Qué son estructuras vestigiales? Ejemplos",
+                answer: "Órganos reducidos sin función aparente, vestigios de ancestros. Ej: apéndice, muelas del juicio en humanos; pelvis en ballenas."
+            },
+            {
+                question: "22. ¿Qué información proporcionan los fósiles?",
+                answer: "<ul><li>Registro de formas ancestrales</li><li>Series evolutivas progresivas</li><li>Cambios climáticos pasados</li><li>Eventos de extinción masiva</li></ul>"
+            },
+            {
+                question: "23. Diferencia entre datación relativa y radiométrica",
+                answer: "<strong>Relativa:</strong> Compara posición en estratos geológicos<br><strong>Radiométrica:</strong> Usa decaimiento de isótopos (ej: C14) para edad absoluta"
+            },
+            {
+                question: "24. ¿Qué evidencias proporciona la embriología comparada?",
+                answer: "Similitudes en etapas tempranas del desarrollo embrionario entre especies relacionadas (ej: branquias en embriones de vertebrados)."
+            },
+            {
+                question: "25. ¿Qué evidencias moleculares apoyan la evolución?",
+                answer: "<ul><li>Similitudes en ADN/ARN entre especies</li><li>Proteínas homólogas (ej: hemoglobina, citocromos)</li><li>Rutas metabólicas conservadas</li></ul>"
+            },
+            {
+                question: "26. ¿Qué es la ontogenia y filogenia?",
+                answer: "<strong>Ontogenia:</strong> Desarrollo individual de un organismo<br><strong>Filogenia:</strong> Historia evolutiva de una especie<br>\"La ontogenia recapitula la filogenia\" (Haeckel)"
+            },
+            {
+                question: "27. ¿Qué es la extinción? Mencione causas naturales",
+                answer: "Desaparición de todos los miembros de una especie. Causas naturales:<ul><li>Cambios ambientales</li><li>Competencia</li><li>Especialización excesiva</li><li>Depredación</li></ul>"
+            },
+            {
+                question: "28. Mencione causas antropogénicas de extinción",
+                answer: "<ul><li>Destrucción de hábitats</li><li>Contaminación</li><li>Introducción de especies invasoras</li><li>Caza furtiva</li><li>Cambio climático</li></ul>"
+            },
+            {
+                question: "29. Ejemplo de caso de extinción en Costa Rica",
+                answer: "<strong>Sapo dorado (Bufo periglenes):</strong> Endémico de Monteverde, último avistamiento en 1989. Probable causa: calentamiento global afectando su hábitat nuboso."
+            },
+            {
+                question: "30. Compare las teorías de Lamarck y Darwin",
+                answer: "<strong>Lamarck:</strong><ul><li>Herencia de caracteres adquiridos</li><li>Uso y desuso modifican órganos</li></ul><strong>Darwin:</strong><ul><li>Selección natural sobre variación existente</li><li>No herencia de caracteres adquiridos</li></ul>"
+            }
+        ];
+
+        // Elementos del DOM
+        const currentCardDisplay = document.getElementById('current-card');
+        const totalCardsDisplay = document.getElementById('total-cards');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const flashcard = document.getElementById('current-flashcard');
+        const questionElement = document.querySelector('.question');
+        const answerElement = document.querySelector('.answer');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Estado de la aplicación
+        let currentCardIndex = 0;
+        let shuffledDeck = [...flashcards];
+        let isFlipping = false;
+        
+        // Inicialización
+        function init() {
+            totalCardsDisplay.textContent = flashcards.length;
+            updateCardDisplay();
+            
+            // Event listeners
+            flashcard.addEventListener('click', flipCard);
+            prevBtn.addEventListener('click', showPrevCard);
+            nextBtn.addEventListener('click', showNextCard);
+            shuffleBtn.addEventListener('click', shuffleCards);
+            
+            // Eventos táctiles para voltear
+            flashcard.addEventListener('touchstart', handleTouchStart, { passive: true });
+            flashcard.addEventListener('touchend', handleTouchEnd, { passive: true });
+            
+            // Eventos para deslizar
+            document.addEventListener('touchstart', handleSwipeStart, { passive: true });
+            document.addEventListener('touchend', handleSwipeEnd, { passive: true });
+            
+            // Eventos de teclado
+            document.addEventListener('keydown', handleKeyDown);
+        }
+        
+        // Actualizar la visualización de la tarjeta actual
+        function updateCardDisplay() {
+            const card = shuffledDeck[currentCardIndex];
+            questionElement.textContent = card.question;
+            answerElement.innerHTML = card.answer;
+            
+            currentCardDisplay.textContent = currentCardIndex + 1;
+            
+            // Actualizar barra de progreso
+            const progress = ((currentCardIndex + 1) / flashcards.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Reiniciar estado de volteo
+            flashcard.classList.remove('flipped');
+        }
+        
+        // Voltear la tarjeta
+        function flipCard() {
+            if (isFlipping) return;
+            
+            isFlipping = true;
+            flashcard.classList.toggle('flipped');
+            
+            // Permitir otro volteo después de la animación
+            setTimeout(() => {
+                isFlipping = false;
+            }, 600);
+        }
+        
+        // Manejar toques para voltear en iOS
+        let touchStartTime = 0;
+        
+        function handleTouchStart(e) {
+            touchStartTime = Date.now();
+        }
+        
+        function handleTouchEnd(e) {
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration < 500) { // Solo considerar toques cortos
+                flipCard();
+            }
+        }
+        
+        // Mostrar tarjeta anterior
+        function showPrevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                updateCardDisplay();
+            }
+        }
+        
+        // Mostrar siguiente tarjeta
+        function showNextCard() {
+            if (currentCardIndex < shuffledDeck.length - 1) {
+                currentCardIndex++;
+                updateCardDisplay();
+            }
+        }
+        
+        // Mezclar tarjetas
+        function shuffleCards() {
+            shuffledDeck = [...flashcards];
+            for (let i = shuffledDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
+            }
+            currentCardIndex = 0;
+            updateCardDisplay();
+        }
+        
+        // Manejar deslizamiento
+        let swipeStartX = 0;
+        
+        function handleSwipeStart(e) {
+            swipeStartX = e.touches[0].clientX;
+        }
+        
+        function handleSwipeEnd(e) {
+            if (!swipeStartX) return;
+            
+            const swipeEndX = e.changedTouches[0].clientX;
+            const diff = swipeEndX - swipeStartX;
+            const threshold = 50; // Mínimo de píxeles para considerar un deslizamiento
+            
+            if (diff > threshold) {
+                showPrevCard();
+            } else if (diff < -threshold) {
+                showNextCard();
+            }
+            
+            swipeStartX = 0;
+        }
+        
+        // Manejar teclado
+        function handleKeyDown(e) {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    showPrevCard();
+                    break;
+                case 'ArrowRight':
+                    showNextCard();
+                    break;
+                case ' ':
+                case 'Spacebar':
+                    flipCard();
+                    e.preventDefault();
+                    break;
+            }
+        }
+        
+        // Iniciar la aplicación
+        window.onload = init;
+    </script>
+</body>
+</html>
