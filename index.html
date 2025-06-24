@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fichas de Biología - II Parcial</title>
+    <title>Fichas de Estudio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -54,6 +54,34 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: #e9ecef;
+            border: none;
+            border-right: 1px solid #ddd;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:last-child {
+            border-right: none;
+        }
+        
+        .tab-btn.active {
+            background: #2980b9;
+            color: white;
         }
         
         .settings {
@@ -170,6 +198,7 @@
             justify-content: center;
             padding: 20px;
             backface-visibility: hidden;
+            overflow-y: auto;
         }
         
         .flashcard-front {
@@ -265,6 +294,114 @@
             font-size: 1.2rem;
         }
         
+        /* Estilos para la sección de preguntas */
+        .question-container {
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .question-container.active {
+            display: flex;
+        }
+        
+        .question-statement {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 2px solid #e2e2e2;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: black; /* Texto negro para mejor contraste */
+        }
+        
+        .option-btn:hover {
+            border-color: #3498db;
+        }
+        
+        .option-btn.selected {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+        
+        .quiz-nav-btn {
+            flex: 1;
+        }
+        
+        .quiz-stats {
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .spaced-repetition-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
         @media (max-width: 600px) {
             .question {
                 font-size: 1.2rem;
@@ -291,19 +428,33 @@
             .controls-top {
                 justify-content: center;
             }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .question-statement {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1><i class="fas fa-dna"></i> Fichas de Biología</h1>
-        <div class="subtitle">II Parcial - Evolución y Fuerzas Evolutivas</div>
+        <h1><i class="fas fa-book"></i> Fichas de Estudio</h1>
+        <div class="subtitle">Formas de Tratamiento y La Metamorfosis</div>
     </header>
     
     <div class="app-container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="formas">Formas de Tratamiento</button>
+            <button class="tab-btn" data-tab="metamorfosis">La Metamorfosis</button>
+            <button class="tab-btn" data-tab="preguntas">Preguntas Kahoot</button>
+        </div>
+        
         <div class="settings">
             <div class="stats">
-                <div class="counter">Tarjeta <span id="current-card">1</span> de <span id="total-cards">30</span></div>
+                <div class="counter">Tarjeta <span id="current-card">1</span> de <span id="total-cards">15</span></div>
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
@@ -316,7 +467,8 @@
             </div>
         </div>
         
-        <div class="flashcard-container">
+        <!-- Sección de fichas -->
+        <div class="flashcard-container" id="flashcard-section">
             <div class="flashcard" id="current-flashcard">
                 <div class="flashcard-content flashcard-front">
                     <div class="question">Cargando preguntas...</div>
@@ -344,6 +496,29 @@
                 Siguiente <i class="fas fa-arrow-right"></i>
             </button>
         </div>
+        
+        <!-- Sección de preguntas Kahoot -->
+        <div class="question-container" id="question-section">
+            <div class="question-statement" id="question-statement">Cargando pregunta...</div>
+            <div class="options" id="options-container">
+                <!-- Las opciones se generarán dinámicamente -->
+            </div>
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="spaced-repetition-info" id="repetition-info">
+                <i class="fas fa-sync-alt"></i> Esta pregunta se repite porque la fallaste anteriormente. Sigue practicando hasta dominarla.
+            </div>
+            
+            <div class="quiz-controls">
+                <button id="quiz-prev-btn" class="quiz-nav-btn">
+                    <i class="fas fa-arrow-left"></i> Anterior
+                </button>
+                <div class="quiz-stats">Pregunta <span id="current-question">1</span> de <span id="total-questions">15</span></div>
+                <button id="quiz-next-btn" class="quiz-nav-btn">
+                    Siguiente <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
     </div>
     
     <div class="footer">
@@ -351,126 +526,288 @@
     </div>
     
     <script>
-        const flashcards = [
+        // Datos para las fichas de Formas de Tratamiento (15 fichas)
+        const formasDeTratamiento = [
             {
-                question: "1. ¿Qué es el perfil genético?",
-                answer: "Información en el ADN de cada individuo. Es diferente para cada uno, excepto gemelos idénticos."
+                question: "¿Qué son las formas de tratamiento?",
+                answer: "Son los usos que los hablantes hacen de la segunda persona gramatical para referirse a esta en forma respetuosa o en un tono de confianza. En español existen tres: voseo, ustedeo y tuteo."
             },
             {
-                question: "2. Defina población en términos genéticos",
-                answer: "Grupo de individuos de una misma especie que viven en la misma área geográfica al mismo tiempo y comparten un mismo conjunto de genes."
+                question: "Explica el voseo verbal",
+                answer: "Se presenta a través de las desinencias verbales, generalmente en el presente del modo indicativo, con tilde en la última sílaba (posición aguda). Ej: '¿Querés ir al cine mañana?'"
             },
             {
-                question: "3. ¿Qué es el acervo genético?",
-                answer: "Todos los alelos de todos los genes presentes en una población."
+                question: "Explica el voseo pronominal",
+                answer: "Utiliza los pronombres 'vos' y 'te', y los adjetivos posesivos 'tu(s)', 'tuyo(s)', 'tuya(s)'. Ej: 'Me parece que Luisa venía con vos, ¿no es cierto?'"
             },
             {
-                question: "4. ¿Qué son las frecuencias alélicas?",
-                answer: "La abundancia relativa de un alelo particular en una población."
+                question: "¿Qué es el tuteo?",
+                answer: "Se emplea en contextos informales con parientes, amigos o personas de confianza. Ej: '¿Quieres pizza o pollo?'"
             },
             {
-                question: "5. Explique qué es la evolución biológica",
-                answer: "Proceso por el cual las características de los individuos de una población cambian con el paso del tiempo, debido a cambios en las frecuencias alélicas."
+                question: "Explica el tuteo pronominal",
+                answer: "Utiliza los pronombres 'tú', 'te', 'ti', 'contigo' y los adjetivos posesivos 'tu(s)', 'tuyo(s)', 'tuya(s)'. Ej: '¿Puedo ir contigo al supermercado?'"
             },
             {
-                question: "6. Diferencia entre microevolución y macroevolución",
-                answer: "<strong>Microevolución:</strong> Cambios menores en las frecuencias alélicas dentro de una población.<br><strong>Macroevolución:</strong> Cambios a gran escala que resultan en la formación de nuevas especies."
+                question: "¿Qué es el ustedeo?",
+                answer: "Surgió como forma de tratamiento de respeto y cortesía. Evolucionó de 'vuestra merced' a 'usted'. Se usa en contextos formales."
             },
             {
-                question: "7. ¿Qué es la especiación?",
-                answer: "Proceso de formación de nuevas especies, donde una especie ancestral se divide en dos o más especies descendientes, generalmente por aislamiento reproductivo."
+                question: "Explica el ustedeo verbal",
+                answer: "Se presenta a través de las desinencias verbales. Ej: 'Disculpe, señora, ¿cómo llego a la parada de autobuses?'"
             },
             {
-                question: "8. Mencione las 5 fuerzas evolutivas principales",
-                answer: "<ul><li>1. Mutaciones</li><li>2. Reproducción sexual</li><li>3. Selección natural</li><li>4. Deriva genética</li><li>5. Migración genética</li></ul>"
+                question: "Explica el ustedeo pronominal",
+                answer: "Utiliza los pronombres 'usted', 'se', 'la(s)', 'le(s)', 'lo(s)' y los adjetivos posesivos 'su(s)', 'suyo(s)', 'suya(s)'. Ej: '¿Le quedó bien el abrigo?'"
             },
             {
-                question: "9. ¿Qué son las mutaciones y cómo contribuyen a la evolución?",
-                answer: "Cambios aleatorios en la secuencia de ADN. Son la fuente principal de nueva variabilidad genética (nuevos alelos) sobre la que actúan otras fuerzas evolutivas."
+                question: "¿Cuál es un error común en el uso de formas de tratamiento?",
+                answer: "Mezclar las formas en un mismo contexto. Ej incorrecto: 'Luis, ¿vos puedes ayudarme?' (mezcla 'vos' con verbo tuteo 'puedes'). Lo correcto sería 'Luis, ¿vos podés ayudarme?' o 'Luis, ¿tú puedes ayudarme?'"
             },
             {
-                question: "10. ¿Cómo contribuye la reproducción sexual a la variabilidad genética?",
-                answer: "A través de tres procesos:<ul><li>1. Entrecruzamiento (recombinación genética)</li><li>2. Distribución independiente de cromosomas</li><li>3. Fecundación al azar</li></ul>"
+                question: "¿Cómo distinguir tuteo y voseo?",
+                answer: "Por las desinencias verbales y el acento gráfico. Ej: <br>Tú: Caminas<br>Vos: Caminás<br>Usted: Camina"
             },
             {
-                question: "11. Explique los tipos de apareamiento",
-                answer: "<strong>Aleatorio:</strong> Sin preferencias (ej: polinización por viento)<br><strong>No aleatorio:</strong> Selección basada en fenotipos<br><strong>Endogamia:</strong> Apareamiento entre individuos genéticamente similares (puede aumentar homocigosis)"
+                question: "¿Dónde es más común el voseo?",
+                answer: "En países como Argentina, Uruguay, Paraguay, Costa Rica, Nicaragua, y en algunas regiones de Colombia, Venezuela y Chile. En España prácticamente no se usa."
             },
             {
-                question: "12. ¿Qué es la selección natural según Darwin?",
-                answer: "Proceso por el cual los organismos mejor adaptados a su ambiente tienen mayor probabilidad de sobrevivir y reproducirse, transmitiendo sus características ventajosas."
+                question: "¿Qué diferencia hay entre 'tú' y 'usted'?",
+                answer: "'Tú' se usa en contextos informales y de confianza, mientras que 'usted' se usa en situaciones formales, con personas mayores o para mostrar respeto."
             },
             {
-                question: "13. Mencione 3 agentes de selección natural",
-                answer: "<ul><li>Condiciones climáticas</li><li>Relaciones depredador-presa</li><li>Disponibilidad de recursos</li><li>Selección sexual</li><li>Enfermedades</li></ul>"
+                question: "¿Cómo se conjuga el verbo 'ser' en voseo?",
+                answer: "Presente de indicativo: vos sos<br>Ej: 'Vos sos mi mejor amigo'"
             },
             {
-                question: "14. ¿Qué es la deriva genética?",
-                answer: "Cambios aleatorios en las frecuencias alélicas, especialmente en poblaciones pequeñas. Incluye:<ul><li>Efecto fundador</li><li>Cuello de botella</li></ul>"
+                question: "¿Qué es el 'vosotros'?",
+                answer: "Es la forma plural del 'tú' que se usa principalmente en España. Ej: 'Vosotros sois estudiantes'. En América Latina se reemplaza por 'ustedes'."
             },
             {
-                question: "15. Explique el efecto fundador",
-                answer: "Cuando un pequeño grupo se separa de una población mayor y establece una nueva población, llevando solo una fracción de la variabilidad genética original."
+                question: "Ejemplo de ustedeo en una frase completa",
+                answer: "'Señor, ¿le gustaría que le ayudara con su equipaje? Usted parece cansado.'<br>Aquí se usan los pronombres 'le' y 'usted', y la conjugación verbal 'gustaría' y 'parece' propias del ustedeo."
+            }
+        ];
+
+        // Datos para las fichas de La Metamorfosis (15 fichas)
+        const metamorfosisCards = [
+            {
+                question: "¿Quién es el autor de 'La metamorfosis'?",
+                answer: "Franz Kafka (1883-1924), escritor checo en lengua alemana. Nació en una familia de comerciantes judíos y trabajó en una compañía de seguros en Praga."
             },
             {
-                question: "16. ¿Qué es un cuello de botella genético?",
-                answer: "Reducción drástica del tamaño de una población que resulta en pérdida significativa de variabilidad genética."
+                question: "¿En qué movimiento literario se inscribe la obra?",
+                answer: "Expresionismo (1912) porque expresa la angustia de la vida humana. También tiene elementos del existencialismo (libertad y elección individual) y surrealismo (rol del inconsciente)."
             },
             {
-                question: "17. ¿Cómo afecta la migración genética a las poblaciones?",
-                answer: "<strong>Inmigración:</strong> Introduce nuevos alelos<br><strong>Emigración:</strong> Elimina alelos existentes<br>Puede homogenizar poblaciones diferentes"
+                question: "Describe la transformación de Gregorio Samsa",
+                answer: "Gregorio despierta convertido en un insecto monstruoso. Su conciencia humana va perdiendo fuerza gradualmente hasta convertirse en conciencia animal. La obra comienza con la metamorfosis ya consumada."
             },
             {
-                question: "18. Mencione 3 evidencias de la evolución",
-                answer: "<ul><li>1. Paleontológicas (fósiles)</li><li>2. Anatómicas (estructuras homólogas/análogas)</li><li>3. Embriológicas</li><li>4. Bioquímicas/moleculares</li><li>5. Biogeográficas</li></ul>"
+                question: "¿Cuáles son los personajes principales?",
+                answer: "<ul><li>Gregorio Samsa: Protagonista convertido en insecto</li><li>Grete: Hermana que sufre una transformación en su actitud</li><li>Señor Samsa: Padre autoritario y violento</li><li>Señora Samsa: Madre subordinada y sentimental</li><li>Sirvienta: Sarcástica e inhumana</li><li>Los tres huéspedes: Representan la autoridad social</li></ul>"
             },
             {
-                question: "19. ¿Qué son estructuras homólogas? Ejemplo",
-                answer: "Órganos con misma estructura básica pero funciones diferentes, que indican ancestro común. Ej: aleta de delfín, ala de murciélago, brazo humano."
+                question: "Explica los temas principales de la obra",
+                answer: "<ul><li>Autoritarismo: Sometimiento y subordinación</li><li>Depresión: Consecuencias de vivir bajo régimen opresivo</li><li>Deshumanización: Pérdida de sensibilidad hacia otros</li><li>Muerte como solución: Único escape al sufrimiento</li><li>Mediocridad de la vida cotidiana: Rutina sin esperanza</li></ul>"
             },
             {
-                question: "20. ¿Qué son estructuras análogas? Ejemplo",
-                answer: "Órganos con funciones similares pero estructura diferente, que no indican parentesco. Ej: alas de insecto vs alas de ave (convergencia evolutiva)."
+                question: "¿Qué simbolizan estos elementos?",
+                answer: "<ul><li>Gregorio: La 'animalización' del ser humano</li><li>El violín: Lo humano, el arte, la belleza</li><li>La ventana: Incapacidad de comunicación con el mundo exterior</li><li>La manzana: Odio, rechazo, violencia familiar</li><li>La casa: Sociedad destruida, sin fe ni esperanza</li></ul>"
             },
             {
-                question: "21. ¿Qué son estructuras vestigiales? Ejemplos",
-                answer: "Órganos reducidos sin función aparente, vestigios de ancestros. Ej: apéndice, muelas del juicio en humanos; pelvis en ballenas."
+                question: "Describe la estructura de la obra",
+                answer: "Dividida en cuatro partes sin nombre (para igualdad):<ol><li>Autoridad laboral (enfrentamiento con el jefe)</li><li>Autoridad fraternal (Grete cuida a Gregorio)</li><li>Autoridad paternal (arrebato del padre)</li><li>Autoridad social (los tres huéspedes)</li></ol>"
             },
             {
-                question: "22. ¿Qué información proporcionan los fósiles?",
-                answer: "<ul><li>Registro de formas ancestrales</li><li>Series evolutivas progresivas</li><li>Cambios climáticos pasados</li><li>Eventos de extinción masiva</li></ul>"
+                question: "¿Qué tipo de sociedad se presenta?",
+                answer: "Una sociedad capitalista, utilitarista y deshumanizante donde el valor del individuo se basa en su productividad económica. Gregorio es apreciado mientras puede trabajar, pero cuando se transforma, su familia lo aísla y rechaza."
             },
             {
-                question: "23. Diferencia entre datación relativa y radiométrica",
-                answer: "<strong>Relativa:</strong> Compara posición en estratos geológicos<br><strong>Radiométrica:</strong> Usa decaimiento de isótopos (ej: C14) para edad absoluta"
+                question: "¿Cómo reacciona la familia ante la muerte de Gregorio?",
+                answer: "Su muerte se presenta como un alivio. La familia lo abandona a su suerte y su muerte les permite celebrar y buscar nuevas opciones de vida. Representa la liberación de una vida de sufrimiento."
             },
             {
-                question: "24. ¿Qué evidencias proporciona la embriología comparada?",
-                answer: "Similitudes en etapas tempranas del desarrollo embrionario entre especies relacionadas (ej: branquias en embriones de vertebrados)."
+                question: "Relación entre Kafka y Gregorio Samsa",
+                answer: "Gregorio es un reflejo de Kafka y su familia. Ambos carecen de relaciones significativas con sus allegados. La relación deprimente de Kafka con su padre se refleja en el repudio que sufre Gregorio por parte de su familia."
             },
             {
-                question: "25. ¿Qué evidencias moleculares apoyan la evolución?",
-                answer: "<ul><li>Similitudes en ADN/ARN entre especies</li><li>Proteínas homólogas (ej: hemoglobina, citocromos)</li><li>Rutas metabólicas conservadas</li></ul>"
+                question: "¿Qué representa el trabajo de viajante de Gregorio?",
+                answer: "La alienación laboral y la esclavitud del sistema capitalista. Gregorio odia su trabajo pero se siente obligado a mantenerlo para pagar las deudas de su familia."
             },
             {
-                question: "26. ¿Qué es la ontogenia y filogenia?",
-                answer: "<strong>Ontogenia:</strong> Desarrollo individual de un organismo<br><strong>Filogenia:</strong> Historia evolutiva de una especie<br>\"La ontogenia recapitula la filogenia\" (Haeckel)"
+                question: "¿Cómo evoluciona el personaje de Grete?",
+                answer: "Al inicio se muestra compasiva con Gregorio, pero gradualmente se vuelve indiferente y finalmente lo rechaza. Su transformación simboliza cómo la sociedad corrompe la compasión humana."
             },
             {
-                question: "27. ¿Qué es la extinción? Mencione causas naturales",
-                answer: "Desaparición de todos los miembros de una especie. Causas naturales:<ul><li>Cambios ambientales</li><li>Competencia</li><li>Especialización excesiva</li><li>Depredación</li></ul>"
+                question: "¿Qué papel juega la comida en la obra?",
+                answer: "Al inicio, la familia intenta alimentar a Gregorio con comida humana, luego le dan restos y finalmente lo olvidan. Este deterioro refleja la pérdida de humanidad y la degradación de Gregorio."
             },
             {
-                question: "28. Mencione causas antropogénicas de extinción",
-                answer: "<ul><li>Destrucción de hábitats</li><li>Contaminación</li><li>Introducción de especies invasoras</li><li>Caza furtiva</li><li>Cambio climático</li></ul>"
+                question: "Explica el significado del título",
+                answer: "La 'metamorfosis' no solo se refiere al cambio físico de Gregorio, sino también a las transformaciones psicológicas de los personajes y la transformación de la familia tras el cambio de Gregorio."
             },
             {
-                question: "29. Ejemplo de caso de extinción en Costa Rica",
-                answer: "<strong>Sapo dorado (Bufo periglenes):</strong> Endémico de Monteverde, último avistamiento en 1989. Probable causa: calentamiento global afectando su hábitat nuboso."
+                question: "¿Qué simboliza la manzana que el padre lanza a Gregorio?",
+                answer: "Representa el rechazo violento de la familia y la agresión física. La manzana queda incrustada en el cuerpo de Gregorio como símbolo de la culpa que siente y del dolor familiar."
+            }
+        ];
+
+        // Preguntas de selección única para el apartado Kahoot (15 preguntas)
+        const kahootQuestions = [
+            // Preguntas sobre Formas de Tratamiento (10)
+            {
+                question: "¿Cuál es un ejemplo correcto de voseo verbal?",
+                options: [
+                    "¿Vos puedes ayudarme?",
+                    "¿Vos podés ayudarme?",
+                    "¿Tú podés ayudarme?",
+                    "¿Usted puede ayudarme?"
+                ],
+                correctIndex: 1
             },
             {
-                question: "30. Compare las teorías de Lamarck y Darwin",
-                answer: "<strong>Lamarck:</strong><ul><li>Herencia de caracteres adquiridos</li><li>Uso y desuso modifican órganos</li></ul><strong>Darwin:</strong><ul><li>Selección natural sobre variación existente</li><li>No herencia de caracteres adquiridos</li></ul>"
+                question: "En el ustedeo, ¿qué pronombres se utilizan?",
+                options: [
+                    "tú, te, ti, contigo",
+                    "vos, te, tu, tuyo",
+                    "usted, se, le, lo",
+                    "tú, vos, usted"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "¿Qué forma de tratamiento se usa en contextos informales con amigos o familiares?",
+                options: [
+                    "Ustedeo",
+                    "Voseo",
+                    "Tuteo",
+                    "Todas las anteriores"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "¿Cuál es un error común en el uso de formas de tratamiento?",
+                options: [
+                    "Usar 'vos' con conjugación verbal de 'tú'",
+                    "Usar 'usted' en contextos formales",
+                    "Usar 'tú' con amigos",
+                    "No usar tilde en el voseo"
+                ],
+                correctIndex: 0
+            },
+            {
+                question: "¿Cómo se dice 'caminas' en voseo?",
+                options: [
+                    "Caminas",
+                    "Caminás",
+                    "Camina",
+                    "Caminan"
+                ],
+                correctIndex: 1
+            },
+            {
+                question: "¿Cuál es la forma correcta del verbo 'tener' en voseo?",
+                options: [
+                    "Vos tienes",
+                    "Vos tenés",
+                    "Vos tiene",
+                    "Vos tener"
+                ],
+                correctIndex: 1
+            },
+            {
+                question: "¿En qué país NO se usa comúnmente el voseo?",
+                options: [
+                    "Argentina",
+                    "España",
+                    "Costa Rica",
+                    "Uruguay"
+                ],
+                correctIndex: 1
+            },
+            {
+                question: "¿Cómo se conjuga el verbo 'ir' en voseo?",
+                options: [
+                    "Vos vas",
+                    "Vos vás",
+                    "Vos ís",
+                    "Vos íes"
+                ],
+                correctIndex: 0
+            },
+            {
+                question: "¿Qué pronombre usarías con un desconocido en un contexto formal?",
+                options: [
+                    "Tú",
+                    "Vos",
+                    "Usted",
+                    "Vosotros"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "¿Cuál es la forma plural de 'tú' en España?",
+                options: [
+                    "Ustedes",
+                    "Vosotros",
+                    "Vosotras",
+                    "Usted"
+                ],
+                correctIndex: 1
+            },
+            
+            // Preguntas sobre La Metamorfosis (5)
+            {
+                question: "¿En qué movimiento literario se inscribe principalmente 'La metamorfosis'?",
+                options: [
+                    "Romanticismo",
+                    "Realismo",
+                    "Expresionismo",
+                    "Modernismo"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "¿Qué simboliza el violín en la obra?",
+                options: [
+                    "La opresión familiar",
+                    "La animalización de Gregorio",
+                    "Lo humano, el arte, la belleza",
+                    "La muerte como solución"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "¿Cómo reacciona la familia ante la muerte de Gregorio?",
+                options: [
+                    "Con profundo dolor y luto",
+                    "Con indiferencia y alivio",
+                    "Con ira y resentimiento",
+                    "Con miedo y remordimiento"
+                ],
+                correctIndex: 1
+            },
+            {
+                question: "¿Qué tipo de sociedad se presenta en la obra?",
+                options: [
+                    "Comunista e igualitaria",
+                    "Feudal y jerarquizada",
+                    "Capitalista y deshumanizante",
+                    "Socialista y solidaria"
+                ],
+                correctIndex: 2
+            },
+            {
+                question: "¿Qué representa la manzana en la obra?",
+                options: [
+                    "El amor familiar",
+                    "La redención",
+                    "El odio y violencia familiar",
+                    "La esperanza"
+                ],
+                correctIndex: 2
             }
         ];
 
@@ -484,15 +821,36 @@
         const questionElement = document.querySelector('.question');
         const answerElement = document.querySelector('.answer');
         const progressBar = document.getElementById('progress-bar');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const flashcardSection = document.getElementById('flashcard-section');
+        const questionSection = document.getElementById('question-section');
+        const questionStatement = document.getElementById('question-statement');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackElement = document.getElementById('feedback');
+        const currentQuestionDisplay = document.getElementById('current-question');
+        const totalQuestionsDisplay = document.getElementById('total-questions');
+        const quizPrevBtn = document.getElementById('quiz-prev-btn');
+        const quizNextBtn = document.getElementById('quiz-next-btn');
+        const repetitionInfo = document.getElementById('repetition-info');
         
         // Estado de la aplicación
         let currentCardIndex = 0;
-        let shuffledDeck = [...flashcards];
+        let currentDeck = [...formasDeTratamiento];
+        let currentTab = 'formas';
+        let shuffledDeck = [...formasDeTratamiento];
         let isFlipping = false;
+        let currentQuestionIndex = 0;
+        let selectedOption = -1;
+        let showAnswer = false;
+        
+        // Almacén para repetición espaciada
+        let incorrectQuestions = []; // Índices de preguntas falladas
+        let spacedRepetitionDeck = []; // Deck especial con preguntas repetidas
         
         // Inicialización
         function init() {
-            totalCardsDisplay.textContent = flashcards.length;
+            totalCardsDisplay.textContent = formasDeTratamiento.length;
+            totalQuestionsDisplay.textContent = kahootQuestions.length;
             updateCardDisplay();
             
             // Event listeners
@@ -500,6 +858,9 @@
             prevBtn.addEventListener('click', showPrevCard);
             nextBtn.addEventListener('click', showNextCard);
             shuffleBtn.addEventListener('click', shuffleCards);
+            tabButtons.forEach(btn => btn.addEventListener('click', switchTab));
+            quizPrevBtn.addEventListener('click', showPrevQuestion);
+            quizNextBtn.addEventListener('click', showNextQuestion);
             
             // Eventos táctiles para voltear
             flashcard.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -511,6 +872,48 @@
             
             // Eventos de teclado
             document.addEventListener('keydown', handleKeyDown);
+            
+            // Inicializar deck de repetición espaciada
+            spacedRepetitionDeck = [...kahootQuestions];
+            
+            // Actualizar sección de preguntas
+            updateQuestionDisplay();
+        }
+        
+        // Cambiar pestaña
+        function switchTab(e) {
+            const tab = e.target.dataset.tab;
+            
+            // Actualizar botones de pestaña
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentTab = tab;
+            
+            // Mostrar la sección correspondiente
+            if (tab === 'preguntas') {
+                flashcardSection.style.display = 'none';
+                document.querySelector('.swipe-instruction').style.display = 'none';
+                document.querySelector('.controls-bottom').style.display = 'none';
+                questionSection.classList.add('active');
+                updateQuestionDisplay();
+            } else {
+                flashcardSection.style.display = 'flex';
+                document.querySelector('.swipe-instruction').style.display = 'flex';
+                document.querySelector('.controls-bottom').style.display = 'flex';
+                questionSection.classList.remove('active');
+                
+                // Cambiar el conjunto de fichas
+                if (tab === 'formas') {
+                    currentDeck = [...formasDeTratamiento];
+                } else if (tab === 'metamorfosis') {
+                    currentDeck = [...metamorfosisCards];
+                }
+                
+                totalCardsDisplay.textContent = currentDeck.length;
+                shuffledDeck = [...currentDeck];
+                currentCardIndex = 0;
+                updateCardDisplay();
+            }
         }
         
         // Actualizar la visualización de la tarjeta actual
@@ -522,7 +925,7 @@
             currentCardDisplay.textContent = currentCardIndex + 1;
             
             // Actualizar barra de progreso
-            const progress = ((currentCardIndex + 1) / flashcards.length) * 100;
+            const progress = ((currentCardIndex + 1) / shuffledDeck.length) * 100;
             progressBar.style.width = `${progress}%`;
             
             // Reiniciar estado de volteo
@@ -574,7 +977,7 @@
         
         // Mezclar tarjetas
         function shuffleCards() {
-            shuffledDeck = [...flashcards];
+            shuffledDeck = [...currentDeck];
             for (let i = shuffledDeck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
@@ -610,17 +1013,115 @@
         function handleKeyDown(e) {
             switch(e.key) {
                 case 'ArrowLeft':
-                    showPrevCard();
+                    if (currentTab === 'preguntas') showPrevQuestion();
+                    else showPrevCard();
                     break;
                 case 'ArrowRight':
-                    showNextCard();
+                    if (currentTab === 'preguntas') showNextQuestion();
+                    else showNextCard();
                     break;
                 case ' ':
                 case 'Spacebar':
-                    flipCard();
+                    if (currentTab !== 'preguntas') flipCard();
                     e.preventDefault();
                     break;
             }
+        }
+        
+        // Actualizar la visualización de la pregunta
+        function updateQuestionDisplay() {
+            // Determinar si estamos mostrando una pregunta fallada
+            const isFailedQuestion = incorrectQuestions.includes(currentQuestionIndex);
+            repetitionInfo.style.display = isFailedQuestion ? 'block' : 'none';
+            
+            const question = kahootQuestions[currentQuestionIndex];
+            questionStatement.textContent = question.question;
+            
+            // Limpiar opciones anteriores
+            optionsContainer.innerHTML = '';
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback';
+            selectedOption = -1;
+            showAnswer = false;
+            
+            // Crear botones de opciones
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(button);
+            });
+            
+            currentQuestionDisplay.textContent = currentQuestionIndex + 1;
+        }
+        
+        // Seleccionar una opción
+        function selectOption(index) {
+            if (showAnswer) return;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            // Remover selección anterior
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            
+            // Seleccionar nueva opción
+            buttons[index].classList.add('selected');
+            selectedOption = index;
+            
+            // Mostrar feedback
+            showAnswer = true;
+            const isCorrect = (index === kahootQuestions[currentQuestionIndex].correctIndex);
+            
+            // Manejar repetición espaciada
+            if (!isCorrect && !incorrectQuestions.includes(currentQuestionIndex)) {
+                // Añadir a preguntas falladas
+                incorrectQuestions.push(currentQuestionIndex);
+            } else if (isCorrect && incorrectQuestions.includes(currentQuestionIndex)) {
+                // Eliminar de preguntas falladas si se responde correctamente
+                incorrectQuestions = incorrectQuestions.filter(i => i !== currentQuestionIndex);
+            }
+            
+            // Actualizar UI según respuesta
+            if (isCorrect) {
+                buttons[index].classList.add('correct');
+                feedbackElement.textContent = '¡Correcto!';
+                feedbackElement.classList.add('correct');
+            } else {
+                buttons[index].classList.add('incorrect');
+                // Marcar la respuesta correcta
+                buttons[kahootQuestions[currentQuestionIndex].correctIndex].classList.add('correct');
+                feedbackElement.textContent = 'Incorrecto. Intenta de nuevo.';
+                feedbackElement.classList.add('incorrect');
+            }
+        }
+        
+        // Mostrar pregunta anterior
+        function showPrevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                updateQuestionDisplay();
+            }
+        }
+        
+        // Mostrar siguiente pregunta con repetición espaciada
+        function showNextQuestion() {
+            // Determinar si debemos priorizar preguntas falladas
+            if (incorrectQuestions.length > 0 && Math.random() > 0.3) {
+                // Seleccionar aleatoriamente una pregunta fallada
+                const randomIndex = Math.floor(Math.random() * incorrectQuestions.length);
+                currentQuestionIndex = incorrectQuestions[randomIndex];
+            } else {
+                // Continuar con el orden normal
+                if (currentQuestionIndex < kahootQuestions.length - 1) {
+                    currentQuestionIndex++;
+                } else {
+                    // Volver al principio si estamos al final
+                    currentQuestionIndex = 0;
+                }
+            }
+            
+            updateQuestionDisplay();
         }
         
         // Iniciar la aplicación
