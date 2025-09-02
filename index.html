@@ -1005,3 +1005,1656 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fichas de Estudio - Palabras C1</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #34495e;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: #34495e;
+            color: #ecf0f1;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .tab-btn.active {
+            background: #2c3e50;
+            box-shadow: inset 0 -4px 0 #3498db;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .search-container {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #3498db;
+        }
+        
+        .search-box i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: white;
+            border: 2px solid #3498db;
+            color: #3498db;
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .counter {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .progress-container {
+            width: 60%;
+            background: #e9ecef;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 0 15px;
+            align-self: center;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #3498db;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        button:active {
+            transform: scale(0.97);
+        }
+        
+        #shuffle-btn {
+            background: #e67e22;
+        }
+        
+        #shuffle-btn:hover {
+            background: #d35400;
+        }
+        
+        .flashcard-container {
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px;
+        }
+        
+        .flashcard {
+            width: 100%;
+            max-width: 600px;
+            height: 320px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+        
+        .flashcard-back {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+            text-align: center;
+        }
+        
+        .word {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .part-of-speech {
+            font-style: italic;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .translation {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .definition {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .example {
+            font-style: italic;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: #e8f6fc;
+        }
+        
+        .hint {
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        
+        .nav-btn {
+            flex: 1;
+            margin: 0 10px;
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .words-list-container {
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid #e9ecef;
+            display: none;
+        }
+        
+        .words-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .word-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .word-item:hover {
+            background: #e9ecef;
+        }
+        
+        .toggle-list {
+            background: #95a5a6;
+            margin-top: 10px;
+        }
+        
+        /* Estilos para la sección Kahoot */
+        .quiz-container {
+            padding: 20px;
+        }
+        
+        .quiz-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .quiz-question {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #3498db;
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .quiz-option {
+            padding: 15px;
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .quiz-option:hover {
+            background: #d6dbdf;
+        }
+        
+        .quiz-option.selected {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .quiz-option.correct {
+            background: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .quiz-option.incorrect {
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        
+        .quiz-feedback {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .quiz-feedback.correct {
+            background: #d5f5e3;
+            color: #27ae60;
+            border: 2px solid #2ecc71;
+        }
+        
+        .quiz-feedback.incorrect {
+            background: #fadbd8;
+            color: #c0392b;
+            border: 2px solid #e74c3c;
+        }
+        
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .quiz-btn {
+            flex: 1;
+            margin: 0 10px;
+            padding: 15px;
+        }
+        
+        footer {
+            margin-top: 20px;
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
+            max-width: 800px;
+        }
+        
+        @media (max-width: 768px) {
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .word {
+                font-size: 2rem;
+            }
+            
+            .translation {
+                font-size: 1.5rem;
+            }
+            
+            .definition {
+                font-size: 1rem;
+            }
+            
+            .flashcard-container {
+                padding: 20px;
+            }
+            
+            .flashcard {
+                height: 280px;
+            }
+            
+            .words-list {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book"></i> Fichas de Estudio</h1>
+            <div class="subtitle">100 Palabras en inglés - Nivel C1 (American English)</div>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="flashcards">Fichas de Estudio</button>
+            <button class="tab-btn" data-tab="quiz">Quiz Tipo Kahoot</button>
+        </div>
+        
+        <!-- Sección de Fichas de Estudio -->
+        <div class="tab-content active" id="flashcards-tab">
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Buscar palabras...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="noun">Sustantivos</button>
+                    <button class="filter-btn" data-filter="verb">Verbos</button>
+                    <button class="filter-btn" data-filter="adj">Adjetivos</button>
+                    <button class="filter-btn" data-filter="adv">Adverbios</button>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <div class="counter">Tarjeta <span id="current-card">1</span> de <span id="total-cards">100</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="shuffle-btn">
+                    <i class="fas fa-random"></i> Mezclar
+                </button>
+                <button id="toggle-list-btn" class="toggle-list">
+                    <i class="fas fa-list"></i> Mostrar Lista
+                </button>
+            </div>
+            
+            <div class="flashcard-container">
+                <div class="flashcard" id="current-flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="word">abstract</div>
+                            <div class="part-of-speech">adj.</div>
+                            <div class="hint">Toca la tarjeta para ver la traducción y definición</div>
+                        </div>
+                        <div class="flashcard-back">
+                            <div class="translation">abstracto</div>
+                            <div class="definition">existing in thought or as an idea but not having a physical or concrete existence</div>
+                            <div class="example">The artist's work became more abstract over time.</div>
+                            <div class="hint">Toca la tarjeta para volver</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button id="prev-btn" class="nav-btn">
+                    <i class="fas fa-arrow-left"></i> Anterior
+                </button>
+                <button id="next-btn" class="nav-btn">
+                    Siguiente <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="words-list-container" id="words-list-container">
+                <div class="words-list" id="words-list">
+                    <!-- Las palabras se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Quiz Tipo Kahoot -->
+        <div class="tab-content" id="quiz-tab">
+            <div class="quiz-container">
+                <div class="quiz-stats">
+                    <div class="counter">Pregunta <span id="current-question">1</span> de <span id="total-questions">10</span></div>
+                    <div class="counter">Puntuación: <span id="score">0</span></div>
+                </div>
+                
+                <div class="quiz-question" id="quiz-question">
+                    <!-- La pregunta se cargará aquí dinámicamente -->
+                </div>
+                
+                <div class="quiz-options" id="quiz-options">
+                    <!-- Las opciones se cargarán aquí dinámicamente -->
+                </div>
+                
+                <div class="quiz-feedback" id="quiz-feedback">
+                    <!-- La retroalimentación se mostrará aquí -->
+                </div>
+                
+                <div class="quiz-controls">
+                    <button id="prev-quiz-btn" class="quiz-btn">
+                        <i class="fas fa-arrow-left"></i> Anterior
+                    </button>
+                    <button id="check-answer-btn" class="quiz-btn">
+                        <i class="fas fa-check"></i> Comprobar
+                    </button>
+                    <button id="next-quiz-btn" class="quiz-btn">
+                        Siguiente <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Creado para practicar 100 palabras en inglés de nivel C1 | Toca las tarjetas para voltearlas</p>
+        <p>Usa la búsqueda y los filtros para encontrar palabras específicas | Pon a prueba tus conocimientos con el quiz</p>
+    </footer>
+
+    <script>
+        // Datos de las palabras C1 (100 palabras)
+        const c1Words = [
+            // Primeras 50 palabras
+            {
+                word: "abstract",
+                partOfSpeech: "adj.",
+                translation: "abstracto",
+                definition: "existing in thought or as an idea but not having a physical or concrete existence",
+                example: "The artist's work became more abstract over time."
+            },
+            {
+                word: "accountability",
+                partOfSpeech: "n.",
+                translation: "responsabilidad",
+                definition: "the fact or condition of being accountable; responsibility",
+                example: "There must be accountability for these actions."
+            },
+            {
+                word: "acquiesce",
+                partOfSpeech: "v.",
+                translation: "consentir",
+                definition: "to accept something reluctantly but without protest",
+                example: "He acquiesced to their demands despite his reservations."
+            },
+            {
+                word: "adept",
+                partOfSpeech: "adj.",
+                translation: "hábil",
+                definition: "very skilled or proficient at something",
+                example: "She is adept at solving complex problems."
+            },
+            {
+                word: "adverse",
+                partOfSpeech: "adj.",
+                translation: "adverso",
+                definition: "preventing success or development; harmful; unfavorable",
+                example: "The company faced adverse market conditions."
+            },
+            {
+                word: "advocate",
+                partOfSpeech: "v.",
+                translation: "defender",
+                definition: "to publicly recommend or support",
+                example: "She advocates for children's rights."
+            },
+            {
+                word: "aesthetic",
+                partOfSpeech: "adj.",
+                translation: "estético",
+                definition: "concerned with beauty or the appreciation of beauty",
+                example: "The building's aesthetic appeal attracted many visitors."
+            },
+            {
+                word: "affluent",
+                partOfSpeech: "adj.",
+                translation: "adinerado",
+                definition: "having a great deal of money; wealthy",
+                example: "They live in an affluent neighborhood."
+            },
+            {
+                word: "aggregate",
+                partOfSpeech: "adj.",
+                translation: "agregado",
+                definition: "formed or calculated by the combination of many separate units or items; total",
+                example: "The aggregate score determined the winner."
+            },
+            {
+                word: "allegedly",
+                partOfSpeech: "adv.",
+                translation: "supuestamente",
+                definition: "used to convey that something is claimed to be the case though there is no proof",
+                example: "He was allegedly involved in the scandal."
+            },
+            {
+                word: "ambiguous",
+                partOfSpeech: "adj.",
+                translation: "ambiguo",
+                definition: "open to more than one interpretation; having a double meaning",
+                example: "His ambiguous statement confused everyone."
+            },
+            {
+                word: "ambivalent",
+                partOfSpeech: "adj.",
+                translation: "ambivalente",
+                definition: "having mixed feelings or contradictory ideas about something or someone",
+                example: "She felt ambivalent about the job offer."
+            },
+            {
+                word: "analogy",
+                partOfSpeech: "n.",
+                translation: "analogía",
+                definition: "a comparison between one thing and another, typically for the purpose of explanation or clarification",
+                example: "He used an analogy to explain the complex concept."
+            },
+            {
+                word: "arbitrary",
+                partOfSpeech: "adj.",
+                translation: "arbitrario",
+                definition: "based on random choice or personal whim, rather than any reason or system",
+                example: "The rules seemed arbitrary and unfair."
+            },
+            {
+                word: "assert",
+                partOfSpeech: "v.",
+                translation: "afirmar",
+                definition: "state a fact or belief confidently and forcefully",
+                example: "She asserted her authority in the meeting."
+            },
+            {
+                word: "autonomous",
+                partOfSpeech: "adj.",
+                translation: "autónomo",
+                definition: "having the freedom to govern itself or control its own affairs",
+                example: "The region became autonomous after the treaty."
+            },
+            {
+                word: "coherent",
+                partOfSpeech: "adj.",
+                translation: "coherente",
+                definition: "logical and consistent; united as or forming a whole",
+                example: "She presented a coherent argument for her proposal."
+            },
+            {
+                word: "conspicuous",
+                partOfSpeech: "adj.",
+                translation: "llamativo",
+                definition: "standing out so as to be clearly visible; attracting notice or attention",
+                example: "His bright red jacket was conspicuous in the crowd."
+            },
+            {
+                word: "controversial",
+                partOfSpeech: "adj.",
+                translation: "controvertido",
+                definition: "giving rise or likely to give rise to public disagreement",
+                example: "The new policy was highly controversial."
+            },
+            {
+                word: "convene",
+                partOfSpeech: "v.",
+                translation: "convocar",
+                definition: "come or bring together for a meeting or activity; assemble",
+                example: "The committee will convene next Tuesday."
+            },
+            {
+                word: "credible",
+                partOfSpeech: "adj.",
+                translation: "creíble",
+                definition: "able to be believed; convincing",
+                example: "She provided credible evidence to support her claim."
+            },
+            {
+                word: "crucial",
+                partOfSpeech: "adj.",
+                translation: "crucial",
+                definition: "decisive or critical, especially in the success or failure of something",
+                example: "Timing is crucial for this experiment."
+            },
+            {
+                word: "cumulative",
+                partOfSpeech: "adj.",
+                translation: "acumulativo",
+                definition: "increasing or increased in quantity, degree, or force by successive additions",
+                example: "The cumulative effect of these changes was significant."
+            },
+            {
+                word: "defer",
+                partOfSpeech: "v.",
+                translation: "diferir",
+                definition: "put off (an action or event) to a later time; postpone",
+                example: "They decided to defer the decision until next month."
+            },
+            {
+                word: "delineate",
+                partOfSpeech: "v.",
+                translation: "delinear",
+                definition: "describe or portray (something) precisely",
+                example: "The report delineates the steps needed for implementation."
+            },
+            {
+                word: "denote",
+                partOfSpeech: "v.",
+                translation: "denotar",
+                definition: "be a sign of; indicate",
+                example: "The red flag denotes danger."
+            },
+            {
+                word: "derive",
+                partOfSpeech: "v.",
+                translation: "derivar",
+                definition: "obtain something from (a specified source)",
+                example: "The word is derived from Latin."
+            },
+            {
+                word: "detrimental",
+                partOfSpeech: "adj.",
+                translation: "perjudicial",
+                definition: "tending to cause harm",
+                example: "Smoking is detrimental to your health."
+            },
+            {
+                word: "devise",
+                partOfSpeech: "v.",
+                translation: "idear",
+                definition: "plan or invent (a complex procedure, system, or mechanism) by careful thought",
+                example: "They devised a new strategy to increase sales."
+            },
+            {
+                word: "differentiate",
+                partOfSpeech: "v.",
+                translation: "diferenciar",
+                definition: "recognize or ascertain what makes (someone or something) different",
+                example: "It's important to differentiate between facts and opinions."
+            },
+            {
+                word: "discretion",
+                partOfSpeech: "n.",
+                translation: "discreción",
+                definition: "the quality of behaving or speaking in such a way as to avoid causing offense or revealing private information",
+                example: "Use your discretion when discussing this matter."
+            },
+            {
+                word: "displacement",
+                partOfSpeech: "n.",
+                translation: "desplazamiento",
+                definition: "the action of moving something from its place or position",
+                example: "The displacement of people after the earthquake was massive."
+            },
+            {
+                word: "disseminate",
+                partOfSpeech: "v.",
+                translation: "diseminar",
+                definition: "spread or disperse (something, especially information) widely",
+                example: "The organization works to disseminate knowledge about climate change."
+            },
+            {
+                word: "divergent",
+                partOfSpeech: "adj.",
+                translation: "divergente",
+                definition: "tending to be different or develop in different directions",
+                example: "They held divergent opinions on the subject."
+            },
+            {
+                word: "elusive",
+                partOfSpeech: "adj.",
+                translation: "escurridizo",
+                definition: "difficult to find, catch, or achieve",
+                example: "The solution to this problem has been elusive."
+            },
+            {
+                word: "empirical",
+                partOfSpeech: "adj.",
+                translation: "empírico",
+                definition: "based on, concerned with, or verifiable by observation or experience rather than theory or pure logic",
+                example: "The research provided empirical evidence for the theory."
+            },
+            {
+                word: "encompass",
+                partOfSpeech: "v.",
+                translation: "abarcar",
+                definition: "include comprehensively",
+                example: "The study encompasses all aspects of the problem."
+            },
+            {
+                word: "endorse",
+                partOfSpeech: "v.",
+                translation: "respaldar",
+                definition: "declare one's public approval or support of",
+                example: "The celebrity endorsed the new product."
+            },
+            {
+                word: "enhance",
+                partOfSpeech: "v.",
+                translation: "mejorar",
+                definition: "intensify, increase, or further improve the quality, value, or extent of",
+                example: "The software update will enhance performance."
+            },
+            {
+                word: "epitomize",
+                partOfSpeech: "v.",
+                translation: "epitomar",
+                definition: "be a perfect example of",
+                example: "She epitomizes elegance and grace."
+            },
+            {
+                word: "equity",
+                partOfSpeech: "n.",
+                translation: "equidad",
+                definition: "the quality of being fair and impartial",
+                example: "The company is committed to pay equity."
+            },
+            {
+                word: "erode",
+                partOfSpeech: "v.",
+                translation: "erosionar",
+                definition: "gradually destroy or be gradually destroyed",
+                example: "Coastal erosion is threatening these cliffs."
+            },
+            {
+                word: "ethos",
+                partOfSpeech: "n.",
+                translation: "ethos",
+                definition: "the characteristic spirit of a culture, era, or community as manifested in its beliefs and aspirations",
+                example: "The school's ethos emphasizes creativity and independence."
+            },
+            {
+                word: "exacerbate",
+                partOfSpeech: "v.",
+                translation: "empeorar",
+                definition: "make (a problem, bad situation, or negative feeling) worse",
+                example: "His comments only exacerbated the conflict."
+            },
+            {
+                word: "exemplary",
+                partOfSpeech: "adj.",
+                translation: "ejemplar",
+                definition: "serving as a desirable model; representing the best of its kind",
+                example: "Her behavior was exemplary throughout the crisis."
+            },
+            {
+                word: "explicit",
+                partOfSpeech: "adj.",
+                translation: "explícito",
+                definition: "stated clearly and in detail, leaving no room for confusion or doubt",
+                example: "The instructions were explicit and easy to follow."
+            },
+            {
+                word: "facilitate",
+                partOfSpeech: "v.",
+                translation: "facilitar",
+                definition: "make (an action or process) easy or easier",
+                example: "The new software will facilitate data analysis."
+            },
+            {
+                word: "formulate",
+                partOfSpeech: "v.",
+                translation: "formular",
+                definition: "create or devise methodically (a strategy or a proposal)",
+                example: "They formulated a new business plan."
+            },
+            {
+                word: "fundamental",
+                partOfSpeech: "adj.",
+                translation: "fundamental",
+                definition: "forming a necessary base or core; of central importance",
+                example: "Respect is fundamental to any relationship."
+            },
+            
+            // 50 palabras adicionales
+            {
+                word: "inherent",
+                partOfSpeech: "adj.",
+                translation: "inherente",
+                definition: "existing in something as a permanent, essential, or characteristic attribute",
+                example: "There are inherent risks in any investment."
+            },
+            {
+                word: "mitigate",
+                partOfSpeech: "v.",
+                translation: "mitigar",
+                definition: "make less severe, serious, or painful",
+                example: "Measures need to be taken to mitigate the effects of climate change."
+            },
+            {
+                word: "paradigm",
+                partOfSpeech: "n.",
+                translation: "paradigma",
+                definition: "a typical example or pattern of something; a model",
+                example: "This discovery represents a paradigm shift in our understanding."
+            },
+            {
+                word: "pragmatic",
+                partOfSpeech: "adj.",
+                translation: "pragmático",
+                definition: "dealing with things sensibly and realistically",
+                example: "We need a pragmatic approach to solve this problem."
+            },
+            {
+                word: "profound",
+                partOfSpeech: "adj.",
+                translation: "profundo",
+                definition: "very great or intense; having or showing great knowledge",
+                example: "The book had a profound impact on my thinking."
+            },
+            {
+                word: "reciprocal",
+                partOfSpeech: "adj.",
+                translation: "recíproco",
+                definition: "given, felt, or done in return",
+                example: "They have a reciprocal agreement with the neighboring country."
+            },
+            {
+                word: "robust",
+                partOfSpeech: "adj.",
+                translation: "robusto",
+                definition: "strong and healthy; vigorous",
+                example: "The economy is showing robust growth."
+            },
+            {
+                word: "subsequent",
+                partOfSpeech: "adj.",
+                translation: "subsiguiente",
+                definition: "coming after something in time; following",
+                example: "Subsequent events proved that he was right."
+            },
+            {
+                word: "substantiate",
+                partOfSpeech: "v.",
+                translation: "substancial",
+                definition: "provide evidence to support or prove the truth of",
+                example: "You need to substantiate your claims with facts."
+            },
+            {
+                word: "tentative",
+                partOfSpeech: "adj.",
+                translation: "tentativo",
+                definition: "not certain or fixed; provisional",
+                example: "We've made tentative plans for the weekend."
+            },
+            {
+                word: "undermine",
+                partOfSpeech: "v.",
+                translation: "socavar",
+                definition: "lessen the effectiveness, power, or ability of",
+                example: "These allegations could undermine his authority."
+            },
+            {
+                word: "validate",
+                partOfSpeech: "v.",
+                translation: "validar",
+                definition: "check or prove the validity or accuracy of",
+                example: "The experiment validated our hypothesis."
+            },
+            {
+                word: "conspicuous",
+                partOfSpeech: "adj.",
+                translation: "visible",
+                definition: "standing out so as to be clearly visible",
+                example: "She was conspicuous by her absence."
+            },
+            {
+                word: "dilemma",
+                partOfSpeech: "n.",
+                translation: "dilema",
+                definition: "a situation in which a difficult choice has to be made",
+                example: "She faced the dilemma of choosing between family and career."
+            },
+            {
+                word: "elaborate",
+                partOfSpeech: "adj.",
+                translation: "elaborado",
+                definition: "involving many carefully arranged parts; detailed",
+                example: "They made elaborate preparations for the event."
+            },
+            {
+                word: "feasible",
+                partOfSpeech: "adj.",
+                translation: "factible",
+                definition: "possible to do easily or conveniently",
+                example: "The plan seems feasible with our current resources."
+            },
+            {
+                word: "heterogeneous",
+                partOfSpeech: "adj.",
+                translation: "heterogéneo",
+                definition: "diverse in character or content",
+                example: "The group was heterogeneous, with people from various backgrounds."
+            },
+            {
+                word: "integrity",
+                partOfSpeech: "n.",
+                translation: "integridad",
+                definition: "the quality of being honest and having strong moral principles",
+                example: "No one doubted his integrity."
+            },
+            {
+                word: "novel",
+                partOfSpeech: "adj.",
+                translation: "novedoso",
+                definition: "new or unusual in an interesting way",
+                example: "She came up with a novel approach to the problem."
+            },
+            {
+                word: "paradox",
+                partOfSpeech: "n.",
+                translation: "paradoja",
+                definition: "a seemingly absurd or contradictory statement that may be true",
+                example: "It's a paradox that standing is more tiring than walking."
+            },
+            {
+                word: "plausible",
+                partOfSpeech: "adj.",
+                translation: "plausible",
+                definition: "seeming reasonable or probable",
+                example: "His explanation sounded plausible."
+            },
+            {
+                word: "rational",
+                partOfSpeech: "adj.",
+                translation: "racional",
+                definition: "based on or in accordance with reason or logic",
+                example: "There must be a rational explanation for this."
+            },
+            {
+                word: "redundant",
+                partOfSpeech: "adj.",
+                translation: "redundante",
+                definition: "not or no longer needed or useful; superfluous",
+                example: "Many workers were made redundant during the recession."
+            },
+            {
+                word: "skeptical",
+                partOfSpeech: "adj.",
+                translation: "escéptico",
+                definition: "not easily convinced; having doubts",
+                example: "I'm skeptical about his promises."
+            },
+            {
+                word: "subtle",
+                partOfSpeech: "adj.",
+                translation: "sutil",
+                definition: "so delicate or precise as to be difficult to analyze",
+                example: "There are subtle differences between the two versions."
+            },
+            {
+                word: "superficial",
+                partOfSpeech: "adj.",
+                translation: "superficial",
+                definition: "existing or occurring at or on the surface",
+                example: "She has only a superficial understanding of the issue."
+            },
+            {
+                word: "tangible",
+                partOfSpeech: "adj.",
+                translation: "tangible",
+                definition: "perceptible by touch; clear and definite; real",
+                example: "The project needs to produce tangible results."
+            },
+            {
+                word: "transparent",
+                partOfSpeech: "adj.",
+                translation: "transparente",
+                definition: "easy to perceive or detect; obvious",
+                example: "The company needs to be more transparent about its operations."
+            },
+            {
+                word: "ubiquitous",
+                partOfSpeech: "adj.",
+                translation: "ubicuo",
+                definition: "present, appearing, or found everywhere",
+                example: "Mobile phones have become ubiquitous in modern society."
+            },
+            {
+                word: "validate",
+                partOfSpeech: "v.",
+                translation: "validar",
+                definition: "check or prove the validity or accuracy of",
+                example: "The experiment validated our hypothesis."
+            },
+            {
+                word: "viable",
+                partOfSpeech: "adj.",
+                translation: "viable",
+                definition: "capable of working successfully; feasible",
+                example: "The project is not economically viable."
+            },
+            {
+                word: "volatile",
+                partOfSpeech: "adj.",
+                translation: "volátil",
+                definition: "liable to change rapidly and unpredictably",
+                example: "The political situation in the region remains volatile."
+            },
+            {
+                word: "warrant",
+                partOfSpeech: "v.",
+                translation: "garantizar",
+                definition: "justify or necessitate (a course of action)",
+                example: "The situation warrants further investigation."
+            },
+            {
+                word: "yield",
+                partOfSpeech: "v.",
+                translation: "producir",
+                definition: "produce or provide (a natural, agricultural, or industrial product)",
+                example: "The experiments yielded surprising results."
+            },
+            {
+                word: "zealous",
+                partOfSpeech: "adj.",
+                translation: "ferviente",
+                definition: "having or showing zeal; fervent",
+                example: "She was a zealous supporter of the cause."
+            },
+            {
+                word: "ambiguous",
+                partOfSpeech: "adj.",
+                translation: "ambiguo",
+                definition: "open to more than one interpretation; having a double meaning",
+                example: "His ambiguous statement confused everyone."
+            },
+            {
+                word: "comprehensive",
+                partOfSpeech: "adj.",
+                translation: "integral",
+                definition: "complete; including all or nearly all elements",
+                example: "The company offers comprehensive insurance coverage."
+            },
+            {
+                word: "conspicuous",
+                partOfSpeech: "adj.",
+                translation: "llamativo",
+                definition: "standing out so as to be clearly visible",
+                example: "She was conspicuous by her absence."
+            },
+            {
+                word: "crucial",
+                partOfSpeech: "adj.",
+                translation: "crucial",
+                definition: "decisive or critical, especially in the success or failure of something",
+                example: "Timing is crucial for this experiment."
+            },
+            {
+                word: "drastic",
+                partOfSpeech: "adj.",
+                translation: "drástico",
+                definition: "likely to have a strong or far-reaching effect; radical",
+                example: "Drastic measures are needed to solve this problem."
+            },
+            {
+                word: "elusive",
+                partOfSpeech: "adj.",
+                translation: "escurridizo",
+                definition: "difficult to find, catch, or achieve",
+                example: "The solution to this problem has been elusive."
+            },
+            {
+                word: "feasible",
+                partOfSpeech: "adj.",
+                translation: "factible",
+                definition: "possible to do easily or conveniently",
+                example: "The plan seems feasible with our current resources."
+            },
+            {
+                word: "integrity",
+                partOfSpeech: "n.",
+                translation: "integridad",
+                definition: "the quality of being honest and having strong moral principles",
+                example: "No one doubted his integrity."
+            },
+            {
+                word: "novel",
+                partOfSpeech: "adj.",
+                translation: "novedoso",
+                definition: "new or unusual in an interesting way",
+                example: "She came up with a novel approach to the problem."
+            },
+            {
+                word: "paradigm",
+                partOfSpeech: "n.",
+                translation: "paradigma",
+                definition: "a typical example or pattern of something; a model",
+                example: "This discovery represents a paradigm shift in our understanding."
+            }
+        ];
+
+        // Elementos del DOM
+        const currentCardDisplay = document.getElementById('current-card');
+        const totalCardsDisplay = document.getElementById('total-cards');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const flashcard = document.getElementById('current-flashcard');
+        const wordElement = document.querySelector('.word');
+        const partOfSpeechElement = document.querySelector('.part-of-speech');
+        const translationElement = document.querySelector('.translation');
+        const definitionElement = document.querySelector('.definition');
+        const exampleElement = document.querySelector('.example');
+        const progressBar = document.getElementById('progress-bar');
+        const searchInput = document.getElementById('search-input');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const wordsListContainer = document.getElementById('words-list-container');
+        const wordsList = document.getElementById('words-list');
+        const toggleListBtn = document.getElementById('toggle-list-btn');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Elementos del quiz
+        const currentQuestionDisplay = document.getElementById('current-question');
+        const totalQuestionsDisplay = document.getElementById('total-questions');
+        const scoreDisplay = document.getElementById('score');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptions = document.getElementById('quiz-options');
+        const quizFeedback = document.getElementById('quiz-feedback');
+        const prevQuizBtn = document.getElementById('prev-quiz-btn');
+        const checkAnswerBtn = document.getElementById('check-answer-btn');
+        const nextQuizBtn = document.getElementById('next-quiz-btn');
+        
+        // Estado de la aplicación
+        let currentCardIndex = 0;
+        let filteredDeck = [...c1Words];
+        let showingList = false;
+        let currentQuizIndex = 0;
+        let selectedOption = -1;
+        let score = 0;
+        let quizQuestions = [];
+        
+        // Inicialización
+        function init() {
+            totalCardsDisplay.textContent = c1Words.length;
+            updateCardDisplay();
+            renderWordsList();
+            generateQuizQuestions();
+            setupQuiz();
+            
+            // Event listeners
+            flashcard.addEventListener('click', flipCard);
+            prevBtn.addEventListener('click', showPrevCard);
+            nextBtn.addEventListener('click', showNextCard);
+            shuffleBtn.addEventListener('click', shuffleCards);
+            searchInput.addEventListener('input', filterCards);
+            filterButtons.forEach(btn => btn.addEventListener('click', applyFilter));
+            toggleListBtn.addEventListener('click', toggleWordsList);
+            tabButtons.forEach(btn => btn.addEventListener('click', switchTab));
+            
+            // Eventos del quiz
+            prevQuizBtn.addEventListener('click', showPrevQuiz);
+            nextQuizBtn.addEventListener('click', showNextQuiz);
+            checkAnswerBtn.addEventListener('click', checkAnswer);
+            
+            // Eventos de teclado
+            document.addEventListener('keydown', handleKeyDown);
+        }
+        
+        // Cambiar pestaña
+        function switchTab(e) {
+            const tab = e.target.dataset.tab;
+            
+            // Actualizar botones de pestaña
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            // Mostrar la pestaña correspondiente
+            tabContents.forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).classList.add('active');
+        }
+        
+        // Generar preguntas para el quiz
+        function generateQuizQuestions() {
+            // Seleccionar 10 palabras aleatorias para el quiz
+            const shuffled = [...c1Words].sort(() => 0.5 - Math.random());
+            quizQuestions = shuffled.slice(0, 10).map(word => {
+                // Seleccionar 3 opciones incorrectas aleatorias
+                const incorrectOptions = [...c1Words]
+                    .filter(w => w.word !== word.word)
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 3)
+                    .map(w => w.word);
+                
+                // Combinar opciones correctas e incorrectas y mezclarlas
+                const options = [word.word, ...incorrectOptions].sort(() => 0.5 - Math.random());
+                
+                return {
+                    question: word.definition,
+                    correctAnswer: word.word,
+                    options: options
+                };
+            });
+            
+            totalQuestionsDisplay.textContent = quizQuestions.length;
+        }
+        
+        // Configurar la pregunta actual del quiz
+        function setupQuiz() {
+            if (quizQuestions.length === 0) return;
+            
+            const currentQuiz = quizQuestions[currentQuizIndex];
+            quizQuestion.textContent = currentQuiz.question;
+            
+            // Limpiar opciones anteriores
+            quizOptions.innerHTML = '';
+            quizFeedback.style.display = 'none';
+            selectedOption = -1;
+            
+            // Crear opciones
+            currentQuiz.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                quizOptions.appendChild(optionElement);
+            });
+            
+            currentQuestionDisplay.textContent = currentQuizIndex + 1;
+        }
+        
+        // Seleccionar una opción en el quiz
+        function selectOption(index) {
+            if (quizFeedback.style.display === 'block') return;
+            
+            const options = document.querySelectorAll('.quiz-option');
+            
+            // Remover selección anterior
+            options.forEach(option => option.classList.remove('selected'));
+            
+            // Seleccionar nueva opción
+            options[index].classList.add('selected');
+            selectedOption = index;
+        }
+        
+        // Comprobar respuesta en el quiz
+        function checkAnswer() {
+            if (selectedOption === -1) return;
+            
+            const currentQuiz = quizQuestions[currentQuizIndex];
+            const options = document.querySelectorAll('.quiz-option');
+            const selectedWord = options[selectedOption].textContent;
+            
+            // Mostrar retroalimentación
+            quizFeedback.style.display = 'block';
+            
+            if (selectedWord === currentQuiz.correctAnswer) {
+                quizFeedback.textContent = '¡Correcto!';
+                quizFeedback.className = 'quiz-feedback correct';
+                score++;
+                scoreDisplay.textContent = score;
+            } else {
+                quizFeedback.textContent = `Incorrecto. La respuesta correcta es: ${currentQuiz.correctAnswer}`;
+                quizFeedback.className = 'quiz-feedback incorrect';
+            }
+        }
+        
+        // Mostrar pregunta anterior del quiz
+        function showPrevQuiz() {
+            if (currentQuizIndex > 0) {
+                currentQuizIndex--;
+                setupQuiz();
+            }
+        }
+        
+        // Mostrar siguiente pregunta del quiz
+        function showNextQuiz() {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                setupQuiz();
+            } else {
+                // Reiniciar quiz al llegar al final
+                currentQuizIndex = 0;
+                score = 0;
+                scoreDisplay.textContent = score;
+                generateQuizQuestions();
+                setupQuiz();
+            }
+        }
+        
+        // Renderizar la lista de palabras
+        function renderWordsList() {
+            wordsList.innerHTML = '';
+            filteredDeck.forEach((word, index) => {
+                const wordItem = document.createElement('div');
+                wordItem.className = 'word-item';
+                wordItem.textContent = word.word;
+                wordItem.addEventListener('click', () => {
+                    currentCardIndex = index;
+                    updateCardDisplay();
+                    flashcard.classList.remove('flipped');
+                });
+                wordsList.appendChild(wordItem);
+            });
+        }
+        
+        // Alternar visibilidad de la lista de palabras
+        function toggleWordsList() {
+            showingList = !showingList;
+            wordsListContainer.style.display = showingList ? 'block' : 'none';
+            toggleListBtn.innerHTML = showingList ? 
+                '<i class="fas fa-times"></i> Ocultar Lista' : 
+                '<i class="fas fa-list"></i> Mostrar Lista';
+        }
+        
+        // Actualizar la visualización de la tarjeta actual
+        function updateCardDisplay() {
+            if (filteredDeck.length === 0) {
+                wordElement.textContent = "No hay palabras";
+                partOfSpeechElement.textContent = "";
+                translationElement.textContent = "Intenta con otro filtro";
+                definitionElement.textContent = "No hay palabras que coincidan con tu búsqueda o filtro";
+                exampleElement.textContent = "";
+                currentCardDisplay.textContent = "0";
+                progressBar.style.width = `0%`;
+                return;
+            }
+            
+            const card = filteredDeck[currentCardIndex];
+            wordElement.textContent = card.word;
+            partOfSpeechElement.textContent = card.partOfSpeech;
+            translationElement.textContent = card.translation;
+            definitionElement.textContent = card.definition;
+            exampleElement.textContent = card.example || "";
+            
+            currentCardDisplay.textContent = currentCardIndex + 1;
+            
+            // Actualizar barra de progreso
+            const progress = ((currentCardIndex + 1) / filteredDeck.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Reiniciar estado de volteo
+            flashcard.classList.remove('flipped');
+        }
+        
+        // Voltear la tarjeta
+        function flipCard() {
+            flashcard.classList.toggle('flipped');
+        }
+        
+        // Mostrar tarjeta anterior
+        function showPrevCard() {
+            if (filteredDeck.length === 0) return;
+            
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+            } else {
+                currentCardIndex = filteredDeck.length - 1;
+            }
+            updateCardDisplay();
+        }
+        
+        // Mostrar siguiente tarjeta
+        function showNextCard() {
+            if (filteredDeck.length === 0) return;
+            
+            if (currentCardIndex < filteredDeck.length - 1) {
+                currentCardIndex++;
+            } else {
+                currentCardIndex = 0;
+            }
+            updateCardDisplay();
+        }
+        
+        // Mezclar tarjetas
+        function shuffleCards() {
+            if (filteredDeck.length === 0) return;
+            
+            for (let i = filteredDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [filteredDeck[i], filteredDeck[j]] = [filteredDeck[j], filteredDeck[i]];
+            }
+            currentCardIndex = 0;
+            updateCardDisplay();
+            renderWordsList();
+        }
+        
+        // Filtrar tarjetas basado en búsqueda
+        function filterCards() {
+            const searchTerm = searchInput.value.toLowerCase();
+            applyFilter();
+            
+            // Aplicar filtro de búsqueda adicional
+            if (searchTerm) {
+                filteredDeck = filteredDeck.filter(word => 
+                    word.word.toLowerCase().includes(searchTerm) || 
+                    word.translation.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            currentCardIndex = 0;
+            updateCardDisplay();
+            renderWordsList();
+        }
+        
+        // Aplicar filtro por tipo de palabra
+        function applyFilter(e) {
+            // Actualizar botones de filtro
+            if (e) {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+            }
+            
+            const filter = document.querySelector('.filter-btn.active').dataset.filter;
+            
+            if (filter === 'all') {
+                filteredDeck = [...c1Words];
+            } else {
+                filteredDeck = c1Words.filter(word => {
+                    if (filter === 'noun') return word.partOfSpeech.includes('n.');
+                    if (filter === 'verb') return word.partOfSpeech.includes('v.');
+                    if (filter === 'adj') return word.partOfSpeech.includes('adj.');
+                    if (filter === 'adv') return word.partOfSpeech.includes('adv.');
+                    return true;
+                });
+            }
+            
+            // Aplicar búsqueda actual si existe
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filteredDeck = filteredDeck.filter(word => 
+                    word.word.toLowerCase().includes(searchTerm) || 
+                    word.translation.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            currentCardIndex = 0;
+            updateCardDisplay();
+            renderWordsList();
+        }
+        
+        // Manejar teclado
+        function handleKeyDown(e) {
+            const activeTab = document.querySelector('.tab-content.active').id;
+            
+            if (activeTab === 'flashcards-tab') {
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        showPrevCard();
+                        break;
+                    case 'ArrowRight':
+                        showNextCard();
+                        break;
+                    case ' ':
+                    case 'Spacebar':
+                        flipCard();
+                        e.preventDefault();
+                        break;
+                }
+            } else if (activeTab === 'quiz-tab') {
+                if (e.key >= '1' && e.key <= '4') {
+                    const index = parseInt(e.key) - 1;
+                    selectOption(index);
+                }
+            }
+        }
+        
+        // Iniciar la aplicación
+        window.onload = init;
+    </script>
+</body>
+</html>
